@@ -1,0 +1,15 @@
+D:\Documents\Internship\Internship-Project-Sara\obj\Debug\net10.0\InternshipProjectSara.GeneratedMSBuildEditorConfig.editorconfig
+D:\Documents\Internship\Internship-Project-Sara\obj\Debug\net10.0\InternshipProjectSara.AssemblyInfoInputs.cache
+D:\Documents\Internship\Internship-Project-Sara\obj\Debug\net10.0\InternshipProjectSara.AssemblyInfo.cs
+D:\Documents\Internship\Internship-Project-Sara\obj\Debug\net10.0\InternshipProjectSara.csproj.CoreCompileInputs.cache
+D:\Documents\Internship\Internship-Project-Sara\obj\Debug\net10.0\InternshipProjectSara.sourcelink.json
+D:\Documents\Internship\Internship-Project-Sara\bin\Debug\net10.0\InternshipProjectSara.exe
+D:\Documents\Internship\Internship-Project-Sara\bin\Debug\net10.0\InternshipProjectSara.deps.json
+D:\Documents\Internship\Internship-Project-Sara\bin\Debug\net10.0\InternshipProjectSara.runtimeconfig.json
+D:\Documents\Internship\Internship-Project-Sara\bin\Debug\net10.0\InternshipProjectSara.dll
+D:\Documents\Internship\Internship-Project-Sara\bin\Debug\net10.0\InternshipProjectSara.pdb
+D:\Documents\Internship\Internship-Project-Sara\obj\Debug\net10.0\InternshipProjectSara.dll
+D:\Documents\Internship\Internship-Project-Sara\obj\Debug\net10.0\refint\InternshipProjectSara.dll
+D:\Documents\Internship\Internship-Project-Sara\obj\Debug\net10.0\InternshipProjectSara.pdb
+D:\Documents\Internship\Internship-Project-Sara\obj\Debug\net10.0\InternshipProjectSara.genruntimeconfig.cache
+D:\Documents\Internship\Internship-Project-Sara\obj\Debug\net10.0\ref\InternshipProjectSara.dll
