@@ -1,4 +1,4 @@
-public class Tasks
+public class Tasks : EntityTracker
 {
     public int Id { get; private set; }
     public string Title { get; private set; }
@@ -7,13 +7,14 @@ public class Tasks
     public int EmployeeId { get; private set; }
     public int AssignedById { get; private set; }
 
-    public Tasks(int id, string title, string description, Status status, int employeeId)
+    public Tasks(int id, string title, string description, Status status, int employeeId, int assignedById, int createdBy) : base(createdBy)
     {
         Id = id;
         Title = title;
         Description = description;
         Status = status;
         EmployeeId = employeeId;
+        AssignedById = assignedById;
     }
 
     public override string ToString()

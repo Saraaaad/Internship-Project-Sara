@@ -1,4 +1,4 @@
-public class User {
+public class User : EntityTracker{
     public int Id { get; private set; }
     public string Username { get; private set; }
     public string Email { get; private set; }
@@ -14,7 +14,7 @@ public class User {
     public List<Tasks> Tasks { get; set; }
     public List<Note> Notes { get; set; }
 
-    public User(int id, string username, string email, string password, Role role, string serialNumber, string fullName, string phone, Salary salary, int departmentId, string? leadSerialNumber, Department department, List<Tasks> tasks, List<Note> notes)
+    public User(int id, string username, string email, string password, Role role, string serialNumber, string fullName, string phone, Salary salary, int departmentId, string? leadSerialNumber, Department department, List<Tasks> tasks, List<Note> notes, int createdBy) : base(createdBy)
     {
         Id = id;
         Username = username;
