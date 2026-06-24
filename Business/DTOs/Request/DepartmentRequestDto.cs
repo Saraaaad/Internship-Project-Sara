@@ -1,0 +1,8 @@
+using System.ComponentModel.DataAnnotations;
+
+public class DepartmentRequestDto
+{
+    [Required(ErrorMessage = "Department name is required")]
+    public string Name { get; set; }
+    public string? LeadSerialNumber { get; set; }
+}
