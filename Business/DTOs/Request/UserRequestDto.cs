@@ -26,5 +26,7 @@ public class UserRequestDto
     public int? DepartmentId { get; set; }
     public decimal SalaryAmount { get; set; }
     public decimal SalaryBonus { get; set; }
+
+    [StringLength(3, MinimumLength = 3, ErrorMessage = "Currency must be 3 characters")]
     public string SalaryCurrency { get; set; }
 }
