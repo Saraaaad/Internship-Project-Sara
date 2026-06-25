@@ -4,12 +4,12 @@ public class User : EntityTracker{
     public string Email { get; private set; }
     public string Password { get; private set; }
     public Role Role { get; private set; }  
-    public string SerialNumber { get; set; }
-    public string FullName { get; set; }
-    public string Phone { get; set; }
-    public Salary Salary { get; set; }
-    public int DepartmentId { get; set; }
-    public string? LeadSerialNumber { get; set; }
+    public string SerialNumber { get; private set; }
+    public string FullName { get; private set; }
+    public string Phone { get; private set; }
+    public Salary Salary { get; private set; }
+    public int DepartmentId { get; private set; }
+    public string? LeadSerialNumber { get; private set; }
     public Department Department { get; set; }
     public List<Tasks> Tasks { get; set; }
     public List<Note> Notes { get; set; }
@@ -36,4 +36,29 @@ public class User : EntityTracker{
     {
         return $"User [Id={Id}, Username={Username}, Email={Email}, Role={Role}, SerialNumber={SerialNumber}, FullName={FullName}, Phone={Phone}, Salary={Salary}, DepartmentId={DepartmentId}, LeadSerialNumber={LeadSerialNumber}, Department={Department}, Tasks=[{string.Join(", ", Tasks)}], Notes=[{string.Join(", ", Notes)}]]";
     }
+
+    public void UpdateProfile(string fullName, string email, string phone)
+    {
+        FullName = fullName;
+        Email = email;
+        Phone = phone;
+        UpdatedAt = DateTime.UtcNow;
+    }
+    public void ChangeRole(Role newRole)
+    {
+        Role = newRole;
+        UpdatedAt = DateTime.UtcNow;
+    }
+
+    public void AssignDepartment(int departmentId)
+    {
+        DepartmentId = departmentId;
+        UpdatedAt = DateTime.UtcNow;
+    }
+
+    public void UpdateSalary(decimal amount, decimal bonus, string currency = "USD")
+{
+    Salary = new Salary(amount, bonus, currency);
+    UpdatedAt = DateTime.UtcNow;
+}
 }
