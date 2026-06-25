@@ -1,10 +1,14 @@
+using InternshipProjectSara.Data.Context;
+
 public class UserService : IUserService
 {
     private readonly IUserRepository urepository;
+     private readonly DatabaseContext _context;
 
-    public UserService(IUserRepository repository)
+    public UserService(IUserRepository repository, DatabaseContext context)
     {
         urepository = repository;
+        _context = context;
     }
 
     public UserResponseDto GetById(int id)
@@ -24,6 +28,7 @@ public class UserService : IUserService
     {
         var user = dto.ToEntity<UserRequestDto, User>();
         urepository.Add(user);
+        _context.SaveChanges();
         return user.ToDto<User, UserResponseDto>();
     }
 
@@ -39,12 +44,14 @@ public class UserService : IUserService
 
         
         urepository.Update(user);
+        _context.SaveChanges();
         return user.ToDto<User, UserResponseDto>();
     }
 
     public void Delete(int id)
     {
         urepository.Delete(id);
+        _context.SaveChanges();
     }
 
     public UserResponseDto UpdateSalary(int userId, SalaryRequestDto dto)
@@ -55,6 +62,7 @@ public class UserService : IUserService
     user.UpdateSalary(dto.Amount, dto.Bonus, dto.Currency);
     
     urepository.Update(user);
+    _context.SaveChanges();
     
     return user.ToDto<User, UserResponseDto>();
 }

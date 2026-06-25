@@ -1,8 +1,5 @@
-public interface ITaskRepository
+public interface ITaskRepository : IRepository<Tasks>
 {
-    Tasks GetById(int id);
     List<Tasks> GetByEmployeeId(int employeeId);
-    void Add(Tasks task);
-    void Update(Tasks task);
-    void Delete(int id);
+    List<Tasks> GetByStatus(Status status);
 }
