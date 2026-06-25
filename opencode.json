@@ -1,0 +1,41 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "default_agent": "uica",
+  "agent": {
+    "uica": {
+      "description": "UI Controller Agent - creates frontend UIs for backend API controllers",
+      "mode": "primary",
+      "model": "anthropic/claude-sonnet-4-6",
+      "stack": {
+        "backend": "ASP.NET Core 10",
+        "orm": "Entity Framework Core",
+        "architecture": "3-Layer DDD",
+        "patterns": ["Repository", "Service", "DTO", "Value Object"],
+        "validation": "Data Annotations",
+        "auth": "ASP.NET Core Identity",
+        "database": "SQL Server",
+        "project": "InternshipProjectSara"
+      }
+    }
+  },
+  "command": {
+    "uica-generate": {
+      "description": "Generate complete CRUD UI for a controller",
+      "agent": "uica"
+    },
+    "uica-form": {
+      "description": "Generate a validated form for a controller",
+      "agent": "uica"
+    },
+    "uica-table": {
+      "description": "Generate a data table for a controller",
+      "agent": "uica"
+    }
+  },
+  "permission": {
+    "skill": {
+      "uica-*": "allow",
+      "*": "ask"
+    }
+  }
+}
