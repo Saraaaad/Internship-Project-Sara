@@ -1,8 +1,6 @@
-public interface IUserRepository
+public interface IUserRepository : IRepository<User>
 {
-    User GetById(int id);
-    List<User> GetAll();
-    void Add(User user);
-    void Update(User user);
-    void Delete(int id);
+    User GetByEmail(string email);
+    User GetByUsername(string username);
+    List<User> GetByDepartmentId(int departmentId);
 }

@@ -1,8 +1,4 @@
-public interface IDepartmentRepository
+public interface IDepartmentRepository : IRepository<Department>
 {
-    Department GetById(int id);
-    List<Department> GetAll();
-    void Add(Department department);
-    void Update(Department department);
-    void Delete(int id);
-    }
+    Department GetByName(string name);
+}
