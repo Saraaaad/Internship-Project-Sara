@@ -1,11 +1,11 @@
 public class Tasks : EntityTracker
 {
-    public int Id { get; private set; }
-    public string Title { get; private set; }
-    public string Description { get; private set; }
-    public Status Status { get; private set; }
-    public int EmployeeId { get; private set; }
-    public int AssignedById { get; private set; }
+    public int Id { get; set; }
+    public string Title { get; set; }
+    public string Description { get; set; }
+    public Status Status { get; set; }
+    public int EmployeeId { get; set; }
+    public int AssignedById { get; set; }
 
     public Tasks(int id, string title, string description, Status status, int employeeId, int assignedById, int createdBy) : base(createdBy)
     {
