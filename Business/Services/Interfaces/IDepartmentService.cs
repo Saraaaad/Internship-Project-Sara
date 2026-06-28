@@ -5,4 +5,5 @@ public interface IDepartmentService
     DepartmentResponseDto Create(DepartmentRequestDto dto);
     DepartmentResponseDto Update(int id, DepartmentRequestDto dto);
     void Delete(int id);
+    DepartmentResponseDto GetByName(string name);
 }
