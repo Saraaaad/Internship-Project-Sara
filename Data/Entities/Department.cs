@@ -1,8 +1,8 @@
 public class Department : EntityTracker{
-    public int Id { get; private set; }
-    public string Name { get; private set; }
-    public string LeadNumber { get; private set; }
-    public List<User> Employees { get; private set; }
+    public int Id { get; set; }
+    public string Name { get; set; }
+    public string LeadNumber { get; set; }
+    public List<User> Employees { get; set; }
 
     public Department(int id, string name, string leadNumber, List<User> employees, int createdBy) : base(createdBy)
     {

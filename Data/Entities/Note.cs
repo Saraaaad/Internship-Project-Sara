@@ -1,24 +1,22 @@
 public class Note : EntityTracker {
 
-    public int Id { get; private set; }
-    public string Title { get; private set; }
-    public string Content { get; private set; }
-    public DateTime CreatedAt { get; private set; }
-    public int EmployeeId { get; private set; }
-    public int IssuerId { get; private set; }
+    public int Id { get; set; }
+    public string Title { get; set; }
+    public string Content { get; set; }
+    public int EmployeeId { get; set; }
+    public int IssuerId { get; set; }
 
-    public Note(int id, string title, string content, DateTime createdAt, int employeeId, int createdBy) : base(createdBy)
+    public Note(int id, string title, string content, int employeeId, int createdBy) : base(createdBy)
     {
 
         Id = id;
         Title = title;
         Content = content;
-        CreatedAt = createdAt;
         EmployeeId = employeeId;
     }
 
     public override string ToString()
     {
-        return $"Note [Id={Id}, Title={Title}, Content={Content}, CreatedAt={CreatedAt}, EmployeeId={EmployeeId}]";
+        return $"Note [Id={Id}, Title={Title}, Content={Content}, EmployeeId={EmployeeId}]";
     }
 }

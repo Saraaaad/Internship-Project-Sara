@@ -26,6 +26,16 @@ public class UserService : IUserService
 
     public UserResponseDto Create(UserRequestDto dto)
     {
+        if (dto == null) throw new ArgumentNullException(nameof(dto));
+
+        var existingEmail = urepository.GetByEmail(dto.Email);
+        if (existingEmail != null)
+        throw new Exception($"User with email {dto.Email} already exists");
+    
+        var existingUser = urepository.GetByUsername(dto.Username);
+        if (existingUser != null)
+        throw new Exception($"Username {dto.Username} is already taken");
+        
         var user = dto.ToEntity<UserRequestDto, User>();
         urepository.Add(user);
         _context.SaveChanges();
@@ -36,7 +46,10 @@ public class UserService : IUserService
     {
         var user = urepository.GetById(id);
         if (user == null) throw new Exception("User not found");
-        
+
+        var transaction = _context.Database.BeginTransaction();
+
+        try {
         user.UpdateProfile(dto.FullName, dto.Phone, dto.Email);
         user.ChangeRole(dto.Role);
         user.AssignDepartment(dto.DepartmentId ?? 0);
@@ -46,10 +59,16 @@ public class UserService : IUserService
         urepository.Update(user);
         _context.SaveChanges();
         return user.ToDto<User, UserResponseDto>();
+        } catch (Exception) {
+            transaction.Rollback();
+            throw;
+        }
     }
 
     public void Delete(int id)
     {
+        var user = urepository.GetById(id);
+        if (user == null) throw new Exception("User not found");
         urepository.Delete(id);
         _context.SaveChanges();
     }
