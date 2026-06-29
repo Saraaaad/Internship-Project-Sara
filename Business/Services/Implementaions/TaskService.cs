@@ -14,7 +14,9 @@ public class TaskService : ITaskService
     public TaskResponseDto GetById(int id)
     {
         var task = trepository.GetById(id);
-        if (task == null) throw new Exception("Task not found");
+        if (task == null)
+            throw new Exception("Task not found");
+            
         return task.ToDto<Tasks, TaskResponseDto>();
     }
 
@@ -41,8 +43,9 @@ public class TaskService : ITaskService
     public TaskResponseDto UpdateStatus(int id, Status status)
     {
         var task = trepository.GetById(id);
-        if (task == null) throw new Exception("Task not found");
-        
+        if (task == null)
+            throw new Exception("Task not found");
+
         task.Status = status;
         trepository.Update(task);
         _context.SaveChanges();
@@ -52,8 +55,9 @@ public class TaskService : ITaskService
     public void Delete(int id)
     {
         var task = trepository.GetById(id);
-        if (task == null) throw new Exception("Task not found");
-        
+        if (task == null)
+            throw new Exception("Task not found");
+
         trepository.Delete(id);
         _context.SaveChanges();
     }
@@ -61,7 +65,8 @@ public class TaskService : ITaskService
     public TaskResponseDto Update(int id, TaskRequestDto dto)
     {
         var task = trepository.GetById(id);
-        if (task == null) throw new Exception("Task not found");
+        if (task == null)
+            throw new Exception("Task not found");
 
         task.Title = dto.Title;
         task.Description = dto.Description;

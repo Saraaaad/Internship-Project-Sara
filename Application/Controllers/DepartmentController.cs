@@ -1,4 +1,3 @@
-
 using Microsoft.AspNetCore.Mvc;
 
 [ApiController]
@@ -15,7 +14,6 @@ public class DepartmentController : ControllerBase
     [HttpGet]
     public ActionResult<List<DepartmentResponseDto>> GetAll()
     {
-
         var departments = dService.GetAll();
         return Ok(departments);
     }
@@ -23,7 +21,6 @@ public class DepartmentController : ControllerBase
     [HttpGet("{id}")]
     public ActionResult<DepartmentResponseDto> GetById(int id)
     {
-
         var department = dService.GetById(id);
         return Ok(department);
     }
@@ -31,7 +28,6 @@ public class DepartmentController : ControllerBase
     [HttpPost]
     public ActionResult<DepartmentResponseDto> Create([FromBody] DepartmentRequestDto dto)
     {
-
         var department = dService.Create(dto);
         return CreatedAtAction(nameof(GetById), new { id = department.Id }, department);
     }
@@ -39,7 +35,6 @@ public class DepartmentController : ControllerBase
     [HttpPut("{id}")]
     public ActionResult<DepartmentResponseDto> Update(int id, [FromBody] DepartmentRequestDto dto)
     {
-
         var department = dService.Update(id, dto);
         return Ok(department);
     }
@@ -47,7 +42,6 @@ public class DepartmentController : ControllerBase
     [HttpDelete("{id}")]
     public ActionResult Delete(int id)
     {
-
         dService.Delete(id);
         return NoContent();
     }
@@ -55,7 +49,6 @@ public class DepartmentController : ControllerBase
     [HttpGet("name/{name}")]
     public ActionResult<DepartmentResponseDto> GetByName(string name)
     {
-
         var department = dService.GetByName(name);
         return Ok(department);
     }

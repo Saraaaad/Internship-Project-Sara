@@ -14,7 +14,9 @@ public class DepartmentService : IDepartmentService
     public DepartmentResponseDto GetById(int id)
     {
         var department = drepository.GetById(id);
-        if (department == null) throw new Exception("Department not found");
+        if (department == null) 
+            throw new Exception("Department not found");
+
         return department.ToDto<Department, DepartmentResponseDto>();
     }
 
@@ -27,7 +29,9 @@ public class DepartmentService : IDepartmentService
     public DepartmentResponseDto Create(DepartmentRequestDto dto)
     {
         var department = dto.ToEntity<DepartmentRequestDto, Department>();
-        if (department == null) throw new ArgumentNullException(nameof(department));
+        if (department == null) 
+            throw new ArgumentNullException(nameof(department));
+            
         var existingDepartment = drepository.GetByName(department.Name);
         if (existingDepartment != null)
             throw new Exception($"Department with name {department.Name} already exists");
@@ -40,7 +44,8 @@ public class DepartmentService : IDepartmentService
     public DepartmentResponseDto Update(int id, DepartmentRequestDto dto)
     {
         var department = drepository.GetById(id);
-        if (department == null) throw new Exception("Department not found");
+        if (department == null) 
+            throw new Exception("Department not found");
         
         department.Name = dto.Name;
         department.LeadNumber = dto.LeadSerialNumber;
@@ -53,7 +58,9 @@ public class DepartmentService : IDepartmentService
     public void Delete(int id)
     {
         var department = drepository.GetById(id);
-        if (department == null) throw new Exception("Department not found");
+        if (department == null) 
+            throw new Exception("Department not found");
+            
         drepository.Delete(id);
         _context.SaveChanges();
     }
@@ -61,7 +68,9 @@ public class DepartmentService : IDepartmentService
     public DepartmentResponseDto GetByName(string name)
     {
         var department = drepository.GetByName(name);
-        if (department == null) throw new Exception("Department not found");
+        if (department == null) 
+            throw new Exception("Department not found");
+            
         return department.ToDto<Department, DepartmentResponseDto>();
     }
 }
