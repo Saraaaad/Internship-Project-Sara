@@ -57,4 +57,11 @@ public class DepartmentService : IDepartmentService
         drepository.Delete(id);
         _context.SaveChanges();
     }
+
+    public DepartmentResponseDto GetByName(string name)
+    {
+        var department = drepository.GetByName(name);
+        if (department == null) throw new Exception("Department not found");
+        return department.ToDto<Department, DepartmentResponseDto>();
+    }
 }

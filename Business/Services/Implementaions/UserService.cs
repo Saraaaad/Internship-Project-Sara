@@ -85,4 +85,25 @@ public class UserService : IUserService
     
     return user.ToDto<User, UserResponseDto>();
 }
+
+public List<UserResponseDto> GetByDepartmentId(int departmentId)
+{
+    var users = urepository.GetByDepartmentId(departmentId);
+    if (users == null || users.Count == 0) throw new Exception("No users found for the specified department");
+    return users.ToDtoList<User, UserResponseDto>();
+}
+
+public UserResponseDto GetByEmail(string email)
+{
+    var user = urepository.GetByEmail(email);
+    if (user == null) throw new Exception("User not found");
+    return user.ToDto<User, UserResponseDto>();
+}
+
+public UserResponseDto GetByUsername(string username)
+{
+    var user = urepository.GetByUsername(username);
+    if (user == null) throw new Exception("User not found");
+    return user.ToDto<User, UserResponseDto>();
+}
 }

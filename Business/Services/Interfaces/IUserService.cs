@@ -6,5 +6,8 @@ public interface IUserService
     UserResponseDto Update(int id, UserRequestDto dto);
     void Delete(int id);
     UserResponseDto UpdateSalary(int userId, SalaryRequestDto dto); 
+    List<UserResponseDto> GetByDepartmentId(int departmentId);
+    UserResponseDto GetByEmail(string email);
+    UserResponseDto GetByUsername(string username);
 
 }
