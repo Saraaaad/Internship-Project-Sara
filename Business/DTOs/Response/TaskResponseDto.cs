@@ -4,6 +4,7 @@ public class TaskResponseDto
     public string Title { get; set; }
     public string Description { get; set; }
     public string Status { get; set; }
+    public DateTime Deadline { get; set; }
     public int EmployeeId { get; set; }
     public string EmployeeName { get; set; }
     public DateTime CreatedAt { get; set; }

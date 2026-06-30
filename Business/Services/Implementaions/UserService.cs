@@ -14,9 +14,9 @@ public class UserService : IUserService
     public UserResponseDto GetById(int id)
     {
         var user = urepository.GetById(id);
-        if (user == null) 
-            throw new Exception("User not found");
-            
+        if (user == null)
+            throw new NotFoundException("User", id);
+
         return user.ToDto<User, UserResponseDto>();
     }
 
@@ -28,16 +28,16 @@ public class UserService : IUserService
 
     public UserResponseDto Create(UserRequestDto dto)
     {
-        if (dto == null) 
+        if (dto == null)
             throw new ArgumentNullException(nameof(dto));
 
         var existingEmail = urepository.GetByEmail(dto.Email);
         if (existingEmail != null)
-            throw new Exception($"User with email {dto.Email} already exists");
+            throw new DuplicateException($"Email {dto.Email} already exists");
 
         var existingUser = urepository.GetByUsername(dto.Username);
         if (existingUser != null)
-            throw new Exception($"Username {dto.Username} is already taken");
+            throw new DuplicateException($"Username {dto.Username} is already taken");
 
         var user = dto.ToEntity<UserRequestDto, User>();
         urepository.Add(user);
@@ -47,9 +47,12 @@ public class UserService : IUserService
 
     public UserResponseDto Update(int id, UserRequestDto dto)
     {
+        if (dto == null)
+            throw new ArgumentNullException(nameof(dto));
+
         var user = urepository.GetById(id);
         if (user == null)
-            throw new Exception("User not found");
+            throw new NotFoundException("User", id);
 
         var transaction = _context.Database.BeginTransaction();
 
@@ -76,7 +79,7 @@ public class UserService : IUserService
     {
         var user = urepository.GetById(id);
         if (user == null)
-            throw new Exception("User not found");
+            throw new NotFoundException("User", id);
 
         urepository.Delete(id);
         _context.SaveChanges();
@@ -84,9 +87,15 @@ public class UserService : IUserService
 
     public UserResponseDto UpdateSalary(int userId, SalaryRequestDto dto)
     {
+        if (dto == null)
+            throw new ArgumentNullException(nameof(dto));
+
         var user = urepository.GetById(userId);
         if (user == null)
-            throw new Exception("User not found");
+            throw new NotFoundException("User", userId);
+
+        if (dto.Amount < 0)
+            throw new ValidationException("User", "Salary", dto.Amount.ToString());
 
         user.UpdateSalary(dto.Amount, dto.Bonus, dto.Currency);
 
@@ -100,7 +109,8 @@ public class UserService : IUserService
     {
         var users = urepository.GetByDepartmentId(departmentId);
         if (users == null || users.Count == 0)
-            throw new Exception("No users found for the specified department");
+            throw new NotFoundException("No users found for the specified department");
+            
         return users.ToDtoList<User, UserResponseDto>();
     }
 
@@ -108,7 +118,7 @@ public class UserService : IUserService
     {
         var user = urepository.GetByEmail(email);
         if (user == null)
-            throw new Exception("User not found");
+            throw new NotFoundException("User", email);
 
         return user.ToDto<User, UserResponseDto>();
     }
@@ -117,7 +127,7 @@ public class UserService : IUserService
     {
         var user = urepository.GetByUsername(username);
         if (user == null)
-            throw new Exception("User not found");
+            throw new NotFoundException($"User with username {username} not found");
 
         return user.ToDto<User, UserResponseDto>();
     }

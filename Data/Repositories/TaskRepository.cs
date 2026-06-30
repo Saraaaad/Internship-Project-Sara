@@ -13,4 +13,8 @@ public class TaskRepository : Repository<Tasks>, ITaskRepository
     {
         return _dbSet.Where(t => t.Status == status).ToList();
     }
+    public List<Tasks> GetByDeadline(DateTime deadline)
+    {
+        return _dbSet.Where(t => t.Deadline == deadline).ToList();
+    }
 }
