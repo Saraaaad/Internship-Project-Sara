@@ -5,6 +5,7 @@ public interface ITaskService
     TaskResponseDto Create(TaskRequestDto dto);
     TaskResponseDto UpdateStatus(int id, Status status);
     List<TaskResponseDto> GetByStatus(Status status);
+    List<TaskResponseDto> GetByDeadline(DateTime deadline);
     TaskResponseDto Update(int id, TaskRequestDto dto);
     void Delete(int id);
 }
