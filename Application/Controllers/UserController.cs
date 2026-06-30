@@ -73,7 +73,6 @@ public class UserController : ControllerBase
     [HttpGet("username/{username}")]
     public ActionResult<UserResponseDto> GetByUsername(string username)
     {
-      
         var user = uService.GetByUsername(username);
         return Ok(user);
     }
