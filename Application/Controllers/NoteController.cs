@@ -21,25 +21,36 @@ public class NoteController : ControllerBase
         }
         catch (Exception ex)
         {
-            return NotFound(ex.Message);
+            return StatusCode(500, ex.Message);
         }
     }
 
     [HttpGet("employee/{employeeId}")]
     public ActionResult<List<NoteResponseDto>> GetByEmployeeId(int employeeId)
     {
-        var notes = nService.GetByEmployeeId(employeeId);
-        return Ok(notes);
+        try
+        {
+            var notes = nService.GetByEmployeeId(employeeId);
+            return Ok(notes);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ex.Message);
+        }
     }
 
     [HttpPost]
     public ActionResult<NoteResponseDto> Create([FromBody] NoteRequestDto dto)
     {
-        var note = nService.Create(dto);
-        if (note == null)
-            return BadRequest("Failed to create note.");
-
-        return CreatedAtAction(nameof(GetById), new { id = note.Id }, note);
+        try
+        {
+            var note = nService.Create(dto);
+            return CreatedAtAction(nameof(GetById), new { id = note.Id }, note);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ex.Message);
+        }
     }
 
     [HttpPut("{id}")]
@@ -52,7 +63,7 @@ public class NoteController : ControllerBase
         }
         catch (Exception ex)
         {
-            return NotFound(ex.Message);
+            return StatusCode(500, ex.Message);
         }
     }
 
@@ -66,7 +77,7 @@ public class NoteController : ControllerBase
         }
         catch (Exception ex)
         {
-            return NotFound(ex.Message);
+            return StatusCode(500, ex.Message);
         }
     }
 }

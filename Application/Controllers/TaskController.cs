@@ -21,29 +21,50 @@ public class TaskController : ControllerBase
         }
         catch (Exception ex)
         {
-            return NotFound(ex.Message);
+            return StatusCode(500, ex.Message);
         }
     }
 
     [HttpGet("employee/{employeeId}")]
     public ActionResult<List<TaskResponseDto>> GetByEmployeeId(int employeeId)
     {
-        var tasks = tService.GetByEmployeeId(employeeId);
-        return Ok(tasks);
+        try
+        {
+            var tasks = tService.GetByEmployeeId(employeeId);
+            return Ok(tasks);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ex.Message);
+        }
     }
 
     [HttpGet("status/{status}")]
     public ActionResult<List<TaskResponseDto>> GetByStatus(Status status)
     {
-        var tasks = tService.GetByStatus(status);
-        return Ok(tasks);
+        try
+        {
+            var tasks = tService.GetByStatus(status);
+            return Ok(tasks);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ex.Message);
+        }
     }
 
     [HttpPost]
     public ActionResult<TaskResponseDto> Create([FromBody] TaskRequestDto dto)
     {
-        var task = tService.Create(dto);
-        return CreatedAtAction(nameof(GetById), new { id = task.Id }, task);
+        try
+        {
+            var task = tService.Create(dto);
+            return CreatedAtAction(nameof(GetById), new { id = task.Id }, task);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ex.Message);
+        }
     }
 
     [HttpPatch("{id}/status")]
@@ -56,7 +77,7 @@ public class TaskController : ControllerBase
         }
         catch (Exception ex)
         {
-            return NotFound(ex.Message);
+            return StatusCode(500, ex.Message);
         }
     }
 
@@ -70,7 +91,7 @@ public class TaskController : ControllerBase
         }
         catch (Exception ex)
         {
-            return NotFound(ex.Message);
+            return StatusCode(500, ex.Message);
         }
     }
 }

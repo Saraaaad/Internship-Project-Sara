@@ -14,42 +14,85 @@ public class DepartmentController : ControllerBase
     [HttpGet]
     public ActionResult<List<DepartmentResponseDto>> GetAll()
     {
-        var departments = dService.GetAll();
-        return Ok(departments);
+        try
+        {
+            var departments = dService.GetAll();
+            return Ok(departments);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ex.Message);
+        }
     }
 
     [HttpGet("{id}")]
     public ActionResult<DepartmentResponseDto> GetById(int id)
     {
-        var department = dService.GetById(id);
-        return Ok(department);
+        try
+        {
+            var department = dService.GetById(id);
+            return Ok(department);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ex.Message);
+        }
     }
 
     [HttpPost]
     public ActionResult<DepartmentResponseDto> Create([FromBody] DepartmentRequestDto dto)
     {
-        var department = dService.Create(dto);
-        return CreatedAtAction(nameof(GetById), new { id = department.Id }, department);
+        try
+        {
+            var department = dService.Create(dto);
+            return CreatedAtAction(nameof(GetById), new { id = department.Id }, department);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ex.Message);
+        }
     }
 
     [HttpPut("{id}")]
     public ActionResult<DepartmentResponseDto> Update(int id, [FromBody] DepartmentRequestDto dto)
     {
-        var department = dService.Update(id, dto);
-        return Ok(department);
+        try
+        {
+            var department = dService.Update(id, dto);
+            return Ok(department);
+
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ex.Message);
+        }
     }
 
     [HttpDelete("{id}")]
     public ActionResult Delete(int id)
     {
-        dService.Delete(id);
-        return NoContent();
+        try
+        {
+            dService.Delete(id);
+            return NoContent();
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ex.Message);
+        }
     }
 
     [HttpGet("name/{name}")]
     public ActionResult<DepartmentResponseDto> GetByName(string name)
     {
-        var department = dService.GetByName(name);
-        return Ok(department);
+        try
+        {
+            var department = dService.GetByName(name);
+            return Ok(department);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ex.Message);
+        }
     }
 }

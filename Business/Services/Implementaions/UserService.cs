@@ -3,11 +3,13 @@ using InternshipProjectSara.Data.Context;
 public class UserService : IUserService
 {
     private readonly IUserRepository urepository;
+    private readonly IDepartmentRepository drepository;
     private readonly DatabaseContext _context;
 
-    public UserService(IUserRepository repository, DatabaseContext context)
+    public UserService(IUserRepository repository, IDepartmentRepository departmentRepository, DatabaseContext context)
     {
         urepository = repository;
+        drepository = departmentRepository;
         _context = context;
     }
 
@@ -38,9 +40,16 @@ public class UserService : IUserService
         var existingUser = urepository.GetByUsername(dto.Username);
         if (existingUser != null)
             throw new DuplicateException($"Username {dto.Username} is already taken");
+        
+        var department = drepository.GetById(dto.DepartmentId ?? 0);
+        if (department == null)
+            throw new NotFoundException("Department", dto.DepartmentId ?? 0);
 
-        var user = dto.ToEntity<UserRequestDto, User>();
+        var user = dto.ToEntity<UserRequestDto, User>(); 
         urepository.Add(user);
+        _context.SaveChanges();
+
+        user.SetSerialNumber(SerialNumberGenerator.Generate(department.DepartmentCode, user.Id));
         _context.SaveChanges();
         return user.ToDto<User, UserResponseDto>();
     }
