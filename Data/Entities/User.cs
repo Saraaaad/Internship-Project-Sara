@@ -57,8 +57,13 @@ public class User : EntityTracker{
     }
 
     public void UpdateSalary(decimal amount, decimal bonus, string currency = "USD")
-{
+    {   
     Salary = new Salary(amount, bonus, currency);
     UpdatedAt = DateTime.UtcNow;
-}
+    }
+    public void SetSerialNumber(string serialNumber)
+    {
+        SerialNumber = serialNumber;
+        UpdatedAt = DateTime.UtcNow;
+    }
 }

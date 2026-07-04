@@ -14,66 +14,127 @@ public class UserController : ControllerBase
     [HttpGet]
     public ActionResult<List<UserResponseDto>> GetAll()
     {
-        var users = uService.GetAll();
-        return Ok(users);
+        try
+        {
+            var users = uService.GetAll();
+            return Ok(users);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ex.Message);
+        }
     }
 
     [HttpGet("{id}")]
     public ActionResult<UserResponseDto> GetById(int id)
     {
-        var user = uService.GetById(id);
-        return Ok(user);
+        try
+        {
+            var user = uService.GetById(id);
+            return Ok(user);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ex.Message);
+        }
     }
 
     [HttpPost]
     public ActionResult<UserResponseDto> Create([FromBody] UserRequestDto dto)
     {
-        var user = uService.Create(dto);
-        return CreatedAtAction(nameof(GetById), new { id = user.Id }, user);
+        try
+        {
+            var user = uService.Create(dto);
+            return CreatedAtAction(nameof(GetById), new { id = user.Id }, user);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ex.Message);
+        }
     }
 
     [HttpPut("{id}")]
     public ActionResult<UserResponseDto> Update(int id, [FromBody] UserRequestDto dto)
     {
-        var user = uService.Update(id, dto);
-        return Ok(user);
+        try
+        {
+            var user = uService.Update(id, dto);
+            return Ok(user);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ex.Message);
+        }
     }
 
     [HttpDelete("{id}")]
     public ActionResult Delete(int id)
     {
-        uService.Delete(id);
-        return NoContent();
+        try
+        {
+            uService.Delete(id);
+            return NoContent();
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ex.Message);
+        }
     }
 
     [HttpPut("{id}/salary")]
     public ActionResult<UserResponseDto> UpdateSalary(int id, [FromBody] SalaryRequestDto dto)
     {
-        dto.UserId = id;
-        var user = uService.UpdateSalary(id, dto);
-        return Ok(user);
-        
+        try
+        {
+            dto.UserId = id;
+            var user = uService.UpdateSalary(id, dto);
+            return Ok(user);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ex.Message);
+        }
     }
 
     [HttpGet("department/{departmentId}")]
     public ActionResult<List<UserResponseDto>> GetByDepartmentId(int departmentId)
     {
-        var users = uService.GetByDepartmentId(departmentId);
-        return Ok(users);
+        try
+        {
+            var users = uService.GetByDepartmentId(departmentId);
+            return Ok(users);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ex.Message);
+        }
     }
 
     [HttpGet("email/{email}")]
     public ActionResult<UserResponseDto> GetByEmail(string email)
     {
-        var user = uService.GetByEmail(email);
-        return Ok(user);
-      
+        try
+        {
+            var user = uService.GetByEmail(email);
+            return Ok(user);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ex.Message);
+        }
     }
 
     [HttpGet("username/{username}")]
     public ActionResult<UserResponseDto> GetByUsername(string username)
     {
-        var user = uService.GetByUsername(username);
-        return Ok(user);
+        try
+        {
+            var user = uService.GetByUsername(username);
+            return Ok(user);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ex.Message);
+        }
     }
 }
