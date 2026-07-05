@@ -1,20 +1,16 @@
 ---
-description: Generate a validated form UI for a .NET controller's create/update action. Pass the controller method or DTO model path.
+description: Generate a validated form UI for a .NET controller's create/update action. Pass the controller name or file path.
 agent: uica
 ---
 
-Generate a validated form user interface for the following .NET controller action:
+Generate a validated form for the following controller:
 
 $ARGUMENTS
 
-Focus specifically on the form component:
-1. Read the C# DTO / ViewModel and map its properties to appropriate form inputs
-2. Mirror Data Annotations (`[Required]`, `[StringLength]`, `[Range]`, etc.) or FluentValidation rules as client-side validation
-3. Use `[Display(Name)]` for labels and `[Display(Prompt)]` for placeholders
-4. Support both create and edit modes via optional initialData prop
-5. Include loading, submitting, success, and error states
-6. API integration for POST (create) and PUT/PATCH (edit) endpoints
-7. Parse `ValidationProblemDetails` (400) for field-level server errors
-8. Handle `ProblemDetails` (500) for general server errors
+Follow this workflow:
+1. Load the `detect-backend-changes` skill to check if the controller or its request DTO changed.
+2. Load the `parse-csharp-controller` skill to extract metadata from the controller file.
+3. Load the `generate-form-for-controller` skill to generate the form component.
+4. After generation, save the snapshot to `.opencode/snapshots/<resourceName>.json`.
 
-Examine existing form components in the project to match conventions.
+Focus only on the form component for the create/update action.
