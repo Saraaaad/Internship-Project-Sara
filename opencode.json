@@ -16,7 +16,7 @@
     "uica": {
       "description": "Generates frontend UI components from ASP.NET Core controllers. Use when creating forms, tables, or CRUD pages for controller endpoints.",
       "mode": "primary",
-      "model": "anthropic/claude-sonnet-4-6",
+      "model": "zen/big-pickle",
       "stack": {
         "backend": "ASP.NET Core 10",
         "orm": "Entity Framework Core",
