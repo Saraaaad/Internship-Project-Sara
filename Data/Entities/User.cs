@@ -1,9 +1,10 @@
-public class User : EntityTracker{
+public class User : EntityTracker
+{
     public int Id { get; private set; }
     public string Username { get; private set; }
     public string Email { get; private set; }
     public string Password { get; private set; }
-    public Role Role { get; private set; }  
+    public Role Role { get; private set; }
     public string SerialNumber { get; private set; }
     public string FullName { get; private set; }
     public string Phone { get; private set; }
@@ -13,7 +14,11 @@ public class User : EntityTracker{
     public Department Department { get; set; }
     public List<Tasks> Tasks { get; set; }
     public List<Note> Notes { get; set; }
-
+    private User() : base(0)
+    {
+        Tasks = new List<Tasks>();
+        Notes = new List<Note>();
+    }
     public User(int id, string username, string email, string password, Role role, string serialNumber, string fullName, string phone, Salary salary, int departmentId, string? leadSerialNumber, Department department, List<Tasks> tasks, List<Note> notes, int createdBy) : base(createdBy)
     {
         Id = id;
@@ -57,13 +62,23 @@ public class User : EntityTracker{
     }
 
     public void UpdateSalary(decimal amount, decimal bonus, string currency = "USD")
-    {   
-    Salary = new Salary(amount, bonus, currency);
-    UpdatedAt = DateTime.UtcNow;
+    {
+        Salary = new Salary(amount, bonus, currency);
+        UpdatedAt = DateTime.UtcNow;
     }
     public void SetSerialNumber(string serialNumber)
     {
         SerialNumber = serialNumber;
+        UpdatedAt = DateTime.UtcNow;
+    }
+    public void SetPassword(string password)
+    {
+        Password = password;
+        UpdatedAt = DateTime.UtcNow;
+    }
+    public void SetRole(Role role)
+    {
+        Role = role;
         UpdatedAt = DateTime.UtcNow;
     }
 }
