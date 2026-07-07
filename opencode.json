@@ -1,18 +1,26 @@
 {
   "$schema": "https://opencode.ai/config.json",
+  "mcp": {
+    "github": {
+      "type": "remote",
+      "url": "https://api.githubcopilot.com/mcp/",
+      "enabled": true,
+      "oauth": false,
+      "headers": {
+        "Authorization": "Bearer {env:GITHUB_PERSONAL_ACCESS_TOKEN}"
+      }
+    }
+  },
   "default_agent": "uica",
   "agent": {
     "uica": {
-      "description": "UI Controller Agent - creates frontend UIs for backend API controllers",
+      "description": "Generates frontend UI components from ASP.NET Core controllers. Use when creating forms, tables, or CRUD pages for controller endpoints.",
       "mode": "primary",
-      "model": "anthropic/claude-sonnet-4-6",
+      "model": "zen/big-pickle",
       "stack": {
         "backend": "ASP.NET Core 10",
         "orm": "Entity Framework Core",
-        "architecture": "3-Layer DDD",
-        "patterns": ["Repository", "Service", "DTO", "Value Object"],
-        "validation": "Data Annotations",
-        "auth": "ASP.NET Core Identity",
+        "architecture": "DDD",
         "database": "SQL Server",
         "project": "InternshipProjectSara"
       }
@@ -20,22 +28,35 @@
   },
   "command": {
     "uica-generate": {
-      "description": "Generate complete CRUD UI for a controller",
-      "agent": "uica"
+      "description": "Generate full CRUD UI for a controller",
+      "agent": "uica",
+      "template": "Generate a complete CRUD UI for the $ARGUMENTS controller: index table, create/edit form, detail view, delete dialog, and API client. First check if the controller has changed since last generation."
     },
     "uica-form": {
-      "description": "Generate a validated form for a controller",
-      "agent": "uica"
+      "description": "Generate a validated form for a controller action",
+      "agent": "uica",
+      "template": "Generate a create/edit form for the $ARGUMENTS controller action. Include field validation matching the .NET Data Annotations. First check if the controller has changed since last generation."
     },
     "uica-table": {
-      "description": "Generate a data table for a controller",
-      "agent": "uica"
+      "description": "Generate a data table for a controller index",
+      "agent": "uica",
+      "template": "Generate a paginated, sortable data table for the $ARGUMENTS controller index endpoint. Include search, filters, and row actions. First check if the controller has changed since last generation."
+    },
+    "uica-diff": {
+      "description": "Check if a controller has changed and needs UI regeneration",
+      "agent": "uica",
+      "template": "Check whether the $ARGUMENTS controller has changed since the last UI generation. Compare current source files with the stored snapshot. Report what changed and which UI components need regeneration."
     }
   },
+  "skills": {
+    "paths": [".opencode/skills"]
+  },
   "permission": {
-    "skill": {
-      "uica-*": "allow",
-      "*": "ask"
-    }
+    "edit": "allow",
+    "read": "allow",
+    "glob": "allow",
+    "grep": "allow",
+    "bash": "allow",
+    "task": "allow"
   }
 }
