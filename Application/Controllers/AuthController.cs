@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 [ApiController]
@@ -11,6 +12,7 @@ public class AuthController : ControllerBase
         this.authService = authService;
     }
 
+    [AllowAnonymous]
     [HttpPost("register")]
     public ActionResult<RegistrationResponseDto> Register([FromBody] RegistrationRequestDto dto)
     {
@@ -21,10 +23,11 @@ public class AuthController : ControllerBase
         }
         catch (Exception ex)
         {
-            return BadRequest(ex.Message);
+            return StatusCode(500, ex.Message);
         }
     }
 
+    [AllowAnonymous]
     [HttpPost("login")]
     public ActionResult<LoginResponseDto> Login([FromBody] LoginRequestDto dto)
     {
@@ -35,7 +38,7 @@ public class AuthController : ControllerBase
         }
         catch (Exception ex)
         {
-            return BadRequest(ex.Message);
+            return StatusCode(500, ex.Message);
         }
     }
 }

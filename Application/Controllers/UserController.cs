@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 [ApiController]
@@ -5,12 +6,15 @@ using Microsoft.AspNetCore.Mvc;
 public class UserController : ControllerBase
 {
     private readonly IUserService uService;
+    private readonly IAuthorizationService authzService;
 
-    public UserController(IUserService userService)
+    public UserController(IUserService userService, IAuthorizationService authorizationService)
     {
         uService = userService;
+        authzService = authorizationService;
     }
 
+    [Authorize(Roles = "Admin,HR")]
     [HttpGet]
     public ActionResult<List<UserResponseDto>> GetAll()
     {
@@ -25,12 +29,16 @@ public class UserController : ControllerBase
         }
     }
 
+    [Authorize]
     [HttpGet("{id}")]
     public ActionResult<UserResponseDto> GetById(int id)
     {
         try
         {
             var user = uService.GetById(id);
+            if (!authzService.CanAccessUserData(id))
+                return Forbid();
+                
             return Ok(user);
         }
         catch (Exception ex)
@@ -39,6 +47,7 @@ public class UserController : ControllerBase
         }
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpPost]
     public ActionResult<UserResponseDto> Create([FromBody] UserRequestDto dto)
     {
@@ -52,7 +61,7 @@ public class UserController : ControllerBase
             return StatusCode(500, ex.Message);
         }
     }
-
+    [Authorize(Roles = "Admin,HR")]
     [HttpPut("{id}")]
     public ActionResult<UserResponseDto> Update(int id, [FromBody] UserRequestDto dto)
     {
@@ -67,6 +76,7 @@ public class UserController : ControllerBase
         }
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpDelete("{id}")]
     public ActionResult Delete(int id)
     {
@@ -81,6 +91,7 @@ public class UserController : ControllerBase
         }
     }
 
+    [Authorize(Roles = "Admin,HR")]
     [HttpPut("{id}/salary")]
     public ActionResult<UserResponseDto> UpdateSalary(int id, [FromBody] SalaryRequestDto dto)
     {
@@ -96,6 +107,7 @@ public class UserController : ControllerBase
         }
     }
 
+    [Authorize(Roles = "Admin,HR")]
     [HttpGet("department/{departmentId}")]
     public ActionResult<List<UserResponseDto>> GetByDepartmentId(int departmentId)
     {
@@ -110,6 +122,7 @@ public class UserController : ControllerBase
         }
     }
 
+    [Authorize(Roles = "Admin,HR")]
     [HttpGet("email/{email}")]
     public ActionResult<UserResponseDto> GetByEmail(string email)
     {
@@ -124,6 +137,7 @@ public class UserController : ControllerBase
         }
     }
 
+    [Authorize(Roles = "Admin,HR")]
     [HttpGet("username/{username}")]
     public ActionResult<UserResponseDto> GetByUsername(string username)
     {

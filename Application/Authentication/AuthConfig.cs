@@ -30,6 +30,8 @@ public static class AuthConfig
             };
         });
 
+        services.AddAuthorization();
+
         return services;
     }
 }
