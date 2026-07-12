@@ -1,0 +1,49 @@
+{
+    "TestFile":  "D:\\Documents\\Internship\\Internship-Project-Sara\\InternshipProjectSara.Tests\\Controllers\\NoteControllerTests.cs",
+    "ControllerFile":  "D:\\Documents\\Internship\\Internship-Project-Sara\\Application\\Controllers\\NoteController.cs",
+    "GeneratedAt":  "2026-07-12T10:45:16Z",
+    "ControllerMetadata":  {
+                               "Actions":  [
+                                               {
+                                                   "AuthorizeAttribute":  "",
+                                                   "MethodName":  "GetById",
+                                                   "Parameters":  "int id",
+                                                   "ReturnType":  "ActionResult\u003cNoteResponseDto\u003e",
+                                                   "HttpMethod":  "HttpGet"
+                                               },
+                                               {
+                                                   "AuthorizeAttribute":  "Roles = \"Admin,Lead\"",
+                                                   "MethodName":  "GetByEmployeeId",
+                                                   "Parameters":  "int employeeId",
+                                                   "ReturnType":  "ActionResult\u003cList\u003cNoteResponseDto\u003e\u003e",
+                                                   "HttpMethod":  "HttpGet"
+                                               },
+                                               {
+                                                   "AuthorizeAttribute":  "Roles = \"Admin,Lead\"",
+                                                   "MethodName":  "Create",
+                                                   "Parameters":  "[FromBody] NoteRequestDto dto",
+                                                   "ReturnType":  "ActionResult\u003cNoteResponseDto\u003e",
+                                                   "HttpMethod":  "HttpPost"
+                                               },
+                                               {
+                                                   "AuthorizeAttribute":  "Roles = \"Admin,Lead\"",
+                                                   "MethodName":  "Update",
+                                                   "Parameters":  "int id, [FromBody] NoteRequestDto dto",
+                                                   "ReturnType":  "ActionResult\u003cNoteResponseDto\u003e",
+                                                   "HttpMethod":  "HttpPut"
+                                               },
+                                               {
+                                                   "AuthorizeAttribute":  null,
+                                                   "MethodName":  "Delete",
+                                                   "Parameters":  "int id",
+                                                   "ReturnType":  "ActionResult",
+                                                   "HttpMethod":  "HttpDelete"
+                                               }
+                                           ],
+                               "Namespace":  "InternshipProjectSara",
+                               "Dependencies":  [
+
+                                                ],
+                               "RoutePrefix":  "api/notes"
+                           }
+}

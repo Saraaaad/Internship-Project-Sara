@@ -1,0 +1,15 @@
+{
+  "ControllerName": "UserController",
+  "GeneratedAt": "2026-07-12 10:03:00",
+  "Summary": {
+    "TotalActions": 11,
+    "TestedActions": 11,
+    "MissingTestsCount": 0,
+    "OutdatedTestsCount": 0
+  },
+  "MissingTests": [],
+  "OutdatedTests": [],
+  "Recommendations": [
+    "All actions are tested with current patterns"
+  ]
+}

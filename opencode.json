@@ -46,6 +46,11 @@
       "description": "Check if a controller has changed and needs UI regeneration",
       "agent": "uica",
       "template": "Check whether the $ARGUMENTS controller has changed since the last UI generation. Compare current source files with the stored snapshot. Report what changed and which UI components need regeneration."
+    },
+    "uica-test": {
+      "description": "Generate unit tests for a controller",
+      "agent": "uica",
+      "template": "Generate comprehensive unit tests for the $ARGUMENTS controller. Check if test project exists, validate existing tests, and generate/update tests with proper mocking, assertions, and coverage. First check if the controller has changed since last test generation."
     }
   },
   "skills": {

@@ -1,0 +1,19 @@
+{
+    "ControllerName":  "User",
+    "OutdatedTests":  null,
+    "GeneratedAt":  "2026-07-12 11:03:49",
+    "Summary":  {
+                    "OutdatedTestsCount":  0,
+                    "TestedActions":  11,
+                    "TotalTestMethods":  29,
+                    "MissingExceptionTests":  0,
+                    "MissingAuthorizationTests":  0,
+                    "TotalActions":  11,
+                    "MissingSuccessTests":  0,
+                    "MissingTestsCount":  0
+                },
+    "Recommendations":  [
+                            "All actions are tested with current patterns"
+                        ],
+    "MissingTests":  null
+}
