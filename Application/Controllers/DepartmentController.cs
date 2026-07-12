@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 [ApiController]
@@ -5,12 +6,15 @@ using Microsoft.AspNetCore.Mvc;
 public class DepartmentController : ControllerBase
 {
     private readonly IDepartmentService dService;
+    private readonly IAuthorizationService authzService;
 
-    public DepartmentController(IDepartmentService departmentService)
+    public DepartmentController(IDepartmentService departmentService, IAuthorizationService authorizationService)
     {
         dService = departmentService;
+        authzService = authorizationService;
     }
 
+    [Authorize]
     [HttpGet]
     public ActionResult<List<DepartmentResponseDto>> GetAll()
     {
@@ -25,6 +29,7 @@ public class DepartmentController : ControllerBase
         }
     }
 
+    [Authorize]
     [HttpGet("{id}")]
     public ActionResult<DepartmentResponseDto> GetById(int id)
     {
@@ -39,6 +44,7 @@ public class DepartmentController : ControllerBase
         }
     }
 
+    [Authorize(Roles = "Admin,HR")]
     [HttpPost]
     public ActionResult<DepartmentResponseDto> Create([FromBody] DepartmentRequestDto dto)
     {
@@ -53,6 +59,7 @@ public class DepartmentController : ControllerBase
         }
     }
 
+    [Authorize(Roles = "Admin,HR")]
     [HttpPut("{id}")]
     public ActionResult<DepartmentResponseDto> Update(int id, [FromBody] DepartmentRequestDto dto)
     {
@@ -68,6 +75,7 @@ public class DepartmentController : ControllerBase
         }
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpDelete("{id}")]
     public ActionResult Delete(int id)
     {
@@ -82,6 +90,7 @@ public class DepartmentController : ControllerBase
         }
     }
 
+    [Authorize]
     [HttpGet("name/{name}")]
     public ActionResult<DepartmentResponseDto> GetByName(string name)
     {

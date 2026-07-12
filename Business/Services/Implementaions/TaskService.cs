@@ -39,9 +39,16 @@ public class TaskService : ITaskService
             throw new ValidationException($"Invalid status value: {status}. Valid values are: {string.Join(", ", Enum.GetNames(typeof(Status)))}");
 
         var tasks = trepository.GetByStatus(status);
-        if (tasks == null || tasks.Count == 0)
-            throw new NotFoundException($"No tasks found with status {status}");
-            
+
+        return tasks.ToDtoList<Tasks, TaskResponseDto>();
+    }
+    
+    public List<TaskResponseDto> GetByEmployeeAndStatus(int employeeId, Status status)
+    {
+        if (!Enum.IsDefined(typeof(Status), status))
+            throw new ValidationException($"Invalid status value: {status}");
+
+        var tasks = trepository.GetByEmployeeAndStatus(employeeId, status);
         return tasks.ToDtoList<Tasks, TaskResponseDto>();
     }
 

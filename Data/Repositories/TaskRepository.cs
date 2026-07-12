@@ -17,4 +17,8 @@ public class TaskRepository : Repository<Tasks>, ITaskRepository
     {
         return _dbSet.Where(t => t.Deadline == deadline).ToList();
     }
+    public List<Tasks> GetByEmployeeAndStatus(int employeeId, Status status)
+    {
+        return _dbSet.Where(t => t.EmployeeId == employeeId && t.Status == status).ToList();
+    }
 }

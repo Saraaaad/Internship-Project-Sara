@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 [ApiController]
@@ -5,18 +6,24 @@ using Microsoft.AspNetCore.Mvc;
 public class NoteController : ControllerBase
 {
     private readonly INoteService nService;
+    private readonly IAuthorizationService authzService;
 
-    public NoteController(INoteService noteService)
+    public NoteController(INoteService noteService, IAuthorizationService authorizationService)
     {
         nService = noteService;
+        authzService = authorizationService;
     }
 
+    [Authorize]
     [HttpGet("{id}")]
     public ActionResult<NoteResponseDto> GetById(int id)
     {
         try
         {
             var note = nService.GetById(id);
+            if (!authzService.CanAccessUserData(note.EmployeeId))
+                return Forbid();
+
             return Ok(note);
         }
         catch (Exception ex)
@@ -25,12 +32,16 @@ public class NoteController : ControllerBase
         }
     }
 
+    [Authorize]
     [HttpGet("employee/{employeeId}")]
     public ActionResult<List<NoteResponseDto>> GetByEmployeeId(int employeeId)
     {
         try
         {
             var notes = nService.GetByEmployeeId(employeeId);
+            if (!authzService.CanAccessUserData(employeeId))
+                return Forbid();
+
             return Ok(notes);
         }
         catch (Exception ex)
@@ -39,6 +50,7 @@ public class NoteController : ControllerBase
         }
     }
 
+    [Authorize(Roles = "Admin,Lead")]
     [HttpPost]
     public ActionResult<NoteResponseDto> Create([FromBody] NoteRequestDto dto)
     {
@@ -53,6 +65,7 @@ public class NoteController : ControllerBase
         }
     }
 
+    [Authorize(Roles = "Admin,Lead")]
     [HttpPut("{id}")]
     public ActionResult<NoteResponseDto> Update(int id, [FromBody] NoteRequestDto dto)
     {
@@ -67,6 +80,7 @@ public class NoteController : ControllerBase
         }
     }
 
+    [Authorize(Roles = "Admin,Lead")]
     [HttpDelete("{id}")]
     public ActionResult Delete(int id)
     {
