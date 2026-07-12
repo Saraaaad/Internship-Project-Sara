@@ -1,0 +1,137 @@
+{
+    "controllerFile":  {
+                           "path":  "D:\\Documents\\Internship\\Internship-Project-Sara\\Application\\Controllers\\TaskController.cs",
+                           "hash":  "4EE08CE07D8FEAE1ADBA299D32FD942377EBB88DBDA617C2DBACBCD8F605F6CF",
+                           "lastModified":  "2026-07-12T02:10:33Z"
+                       },
+    "coverage":  {
+                     "testedActions":  14,
+                     "testMethods":  14,
+                     "totalActions":  14
+                 },
+    "generatedTests":  [
+                           {
+                               "Name":  "GetById_WhenValid_ReturnsSuccess",
+                               "Type":  "Fact"
+                           },
+                           {
+                               "Name":  "GetById_WhenExceptionThrown_ReturnsInternalServerError",
+                               "Type":  "Fact"
+                           },
+                           {
+                               "Name":  "GetByEmployeeId_WhenValid_ReturnsSuccess",
+                               "Type":  "Fact"
+                           },
+                           {
+                               "Name":  "GetByEmployeeId_WhenExceptionThrown_ReturnsInternalServerError",
+                               "Type":  "Fact"
+                           },
+                           {
+                               "Name":  "GetByStatus_WhenValid_ReturnsSuccess",
+                               "Type":  "Fact"
+                           },
+                           {
+                               "Name":  "GetByStatus_WhenExceptionThrown_ReturnsInternalServerError",
+                               "Type":  "Fact"
+                           },
+                           {
+                               "Name":  "Create_WhenValid_ReturnsSuccess",
+                               "Type":  "Fact"
+                           },
+                           {
+                               "Name":  "Create_WhenExceptionThrown_ReturnsInternalServerError",
+                               "Type":  "Fact"
+                           },
+                           {
+                               "Name":  "Create_WhenUnauthorized_ReturnsForbid",
+                               "Type":  "Fact"
+                           },
+                           {
+                               "Name":  "UpdateStatus_WhenValid_ReturnsSuccess",
+                               "Type":  "Fact"
+                           },
+                           {
+                               "Name":  "UpdateStatus_WhenExceptionThrown_ReturnsInternalServerError",
+                               "Type":  "Fact"
+                           },
+                           {
+                               "Name":  "Delete_WhenValid_ReturnsSuccess",
+                               "Type":  "Fact"
+                           },
+                           {
+                               "Name":  "Delete_WhenExceptionThrown_ReturnsInternalServerError",
+                               "Type":  "Fact"
+                           },
+                           {
+                               "Name":  "Delete_WhenUnauthorized_ReturnsForbid",
+                               "Type":  "Fact"
+                           }
+                       ],
+    "dtoFiles":  [
+                     {
+                         "hash":  "B4ACBE5B720058D54288F81FC9BC4BD58397AC61323E27392923F6413874B100",
+                         "path":  "Business\\DTOs\\Request\\ChangePasswordRequestDto.cs"
+                     },
+                     {
+                         "hash":  "3D09298644A61990ADA00968A009C1318DBC207C439C37020940AB72D5B305F6",
+                         "path":  "Business\\DTOs\\Request\\DepartmentRequestDto.cs"
+                     },
+                     {
+                         "hash":  "3C8DFD2682F95DD2B77751CD4B7A08F1233FB660E75EE7B010DA97CC2ECD6FE6",
+                         "path":  "Business\\DTOs\\Request\\LoginRequestDto.cs"
+                     },
+                     {
+                         "hash":  "780623E699CF0E164BFC882ACBDC9ACC874A52F57BF7A9A62A5F90C1001AC0D1",
+                         "path":  "Business\\DTOs\\Request\\NoteRequestDto.cs"
+                     },
+                     {
+                         "hash":  "4062F8A2E6526F40F8FDCDA44F2ADA1775D6D52B64D576A18DFAC4DAD9469CAD",
+                         "path":  "Business\\DTOs\\Request\\RegistrationRequestDto.cs"
+                     },
+                     {
+                         "hash":  "13B215D639406BA00145B0CE1DD781FC80ED69C7346D044A916F352452C7B407",
+                         "path":  "Business\\DTOs\\Request\\SalaryRequestDto.cs"
+                     },
+                     {
+                         "hash":  "2B7CC5667DD259EE0427BC8B771368815F9CB41A5CFDDFFB486EEE76F08A527F",
+                         "path":  "Business\\DTOs\\Request\\TaskRequestDto.cs"
+                     },
+                     {
+                         "hash":  "818C6981083CA3AF1EA23DE2F038EA4C548EC7AE74306D67F6DA9BE3F23F61ED",
+                         "path":  "Business\\DTOs\\Request\\UserRequestDto.cs"
+                     },
+                     {
+                         "hash":  "66BD9F7EE60749B6D7058FDC0A37B0F88413028752E252CF4B1D384416DD3D77",
+                         "path":  "Business\\DTOs\\Response\\DepartmentResponseDto.cs"
+                     },
+                     {
+                         "hash":  "8928E962D973020BD0BF525B0530FFE6678BBC2EA5380D71F6B6F942BD169A7F",
+                         "path":  "Business\\DTOs\\Response\\LoginResponseDto.cs"
+                     },
+                     {
+                         "hash":  "6D1CAB026FB51C3B70830B291E1B1E8BE294A27203CF54A87588E247DF20B1EF",
+                         "path":  "Business\\DTOs\\Response\\NoteResponseDto.cs"
+                     },
+                     {
+                         "hash":  "F8098F319B110C9D462DA8D58A612AF6E0E6511787BA6791288B4A084B193C63",
+                         "path":  "Business\\DTOs\\Response\\RegistrationResponseDto.cs"
+                     },
+                     {
+                         "hash":  "97A5BF868B0D9558CC77D6F6B3842805A3F4FC7C2AC5710E21B01ADF8DFD1827",
+                         "path":  "Business\\DTOs\\Response\\TaskResponseDto.cs"
+                     },
+                     {
+                         "hash":  "159FF18E1C5A9D82AF4EA8BD299C0F20D6DFC35E4A632471640B0E3F0A0F265F",
+                         "path":  "Business\\DTOs\\Response\\UserResponseDto.cs"
+                     }
+                 ],
+    "serviceInterfaces":  [
+
+                          ],
+    "testFile":  {
+                     "path":  "D:\\Documents\\Internship\\Internship-Project-Sara\\InternshipProjectSara.Tests\\Controllers\\TaskControllerTests.cs",
+                     "testCount":  14,
+                     "hash":  "2A76F2B94EC9F02F0D52F0A4BE54BAB793D30399DB98B44A007DE6B59BDF4690"
+                 },
+    "generatedAt":  "2026-07-12T11:52:09Z"
+}
