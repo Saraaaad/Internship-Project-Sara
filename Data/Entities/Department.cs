@@ -5,6 +5,10 @@ public class Department : EntityTracker{
 
     public string LeadNumber { get; set; }
     public List<User> Employees { get; set; }
+    private Department() : base(0)
+    {
+        Employees = new List<User>();
+    }
 
     public Department(int id, string name, string departmentCode, string leadNumber, List<User> employees, int createdBy) : base(createdBy)
     {
