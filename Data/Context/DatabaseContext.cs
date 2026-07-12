@@ -13,6 +13,7 @@ public class DatabaseContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<User>().OwnsOne(u => u.Salary);
         base.OnModelCreating(modelBuilder);
     }
 }

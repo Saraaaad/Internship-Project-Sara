@@ -2,6 +2,7 @@ public class Salary {
     public decimal Amount { get; private set; }
     public decimal Bonus { get; private set; }
     public string Currency { get; private set; }
+    public Salary() { }
 
     public Salary(decimal amount, decimal bonus, string currency)
     {

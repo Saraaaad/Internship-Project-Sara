@@ -23,9 +23,6 @@ public class DepartmentService : IDepartmentService
     public List<DepartmentResponseDto> GetAll()
     {
         var departments = drepository.GetAll();
-        if (departments == null || departments.Count == 0)
-            throw new NotFoundException("No departments found");
-            
         return departments.ToDtoList<Department, DepartmentResponseDto>();
     }
 

@@ -7,6 +7,7 @@ public class Tasks : EntityTracker
     public DateTime Deadline { get; set; }
     public int EmployeeId { get; set; }
     public int AssignedById { get; set; }
+    private Tasks() : base(0){ }
 
     public Tasks(int id, string title, string description, Status status, DateTime deadline, int employeeId, int assignedById, int createdBy) : base(createdBy)
     {
