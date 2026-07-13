@@ -6,6 +6,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 Mapper.Initialize();
 
+builder.Services.AddSingleton<JwtSettings>(sp => builder.Configuration.GetSection("JwtSettings").Get<JwtSettings>());
 builder.Services.AddSingleton<JwtTokenGenerator>();
 
 
@@ -27,9 +28,10 @@ builder.Services.AddScoped<INoteService, NoteService>();
 builder.Services.AddScoped<ITaskService, TaskService>();
 
 // Authentication and Authorization
+builder.Services.AddHttpContextAccessor(); 
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IAuthorizationService, AuthorizationService>();
-builder.Services.AddJwtAuthentication(builder.Configuration.GetSection("JwtSettings"));
+builder.Services.AddJwtAuthentication(builder.Configuration);
 
 // Add Controllers
 builder.Services.AddControllers();

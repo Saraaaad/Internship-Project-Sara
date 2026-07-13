@@ -33,15 +33,8 @@ public class DepartmentController : ControllerBase
     [HttpGet("{id}")]
     public ActionResult<DepartmentResponseDto> GetById(int id)
     {
-        try
-        {
-            var department = dService.GetById(id);
-            return Ok(department);
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(500, ex.Message);
-        }
+        var department = dService.GetById(id);
+        return Ok(department);
     }
 
     [Authorize(Roles = "Admin,HR")]
