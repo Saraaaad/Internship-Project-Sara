@@ -11,6 +11,8 @@ public static class GlobalExceptionHandler
             errorApp.Run(async context =>
             {
                 var exception = context.Features.Get<IExceptionHandlerFeature>()?.Error;
+                var loggerFactory = context.RequestServices.GetRequiredService<ILoggerFactory>();
+                var logger = loggerFactory.CreateLogger("GlobalExceptionHandler");
 
                 var (statusCode, message) = exception switch
                 {
@@ -19,8 +21,12 @@ public static class GlobalExceptionHandler
                     DuplicateException => (HttpStatusCode.Conflict, exception.Message),
                     ArgumentNullException => (HttpStatusCode.BadRequest, "Invalid request data"),
                     ArgumentException => (HttpStatusCode.BadRequest, exception.Message),
+                    UnauthorizedAccessException => (HttpStatusCode.Unauthorized, "Unauthorized access"),
                     _ => (HttpStatusCode.InternalServerError, "An internal error occurred")
                 };
+
+                if (statusCode == HttpStatusCode.InternalServerError && exception != null)
+                    logger.LogError(exception, "An Unhandled error occurred: {Message}", exception.Message);
 
                 context.Response.StatusCode = (int)statusCode;
                 context.Response.ContentType = "application/json";

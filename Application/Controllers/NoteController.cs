@@ -7,91 +7,62 @@ public class NoteController : ControllerBase
 {
     private readonly INoteService nService;
     private readonly IAuthorizationService authzService;
+    private readonly ILogger<NoteController> logger;
 
-    public NoteController(INoteService noteService, IAuthorizationService authorizationService)
+    public NoteController(INoteService noteService, IAuthorizationService authorizationService, ILogger<NoteController> logger)
     {
         nService = noteService;
         authzService = authorizationService;
+        this.logger = logger;
     }
 
     [Authorize]
     [HttpGet("{id}")]
     public ActionResult<NoteResponseDto> GetById(int id)
     {
-        try
+        var note = nService.GetById(id);
+        if (!authzService.CanAccessUserData(note.EmployeeId))
         {
-            var note = nService.GetById(id);
-            if (!authzService.CanAccessUserData(note.EmployeeId))
-                return Forbid();
-
-            return Ok(note);
+            logger.LogWarning("User with id: {current} tried to access data for user with id : {id}", authzService.GetCurrentUserId(), note.EmployeeId);
+            return Forbid();
         }
-        catch (Exception ex)
-        {
-            return StatusCode(500, ex.Message);
-        }
+        return Ok(note);
     }
 
     [Authorize]
     [HttpGet("employee/{employeeId}")]
     public ActionResult<List<NoteResponseDto>> GetByEmployeeId(int employeeId)
     {
-        try
+        if (!authzService.CanAccessUserData(employeeId))
         {
-            var notes = nService.GetByEmployeeId(employeeId);
-            if (!authzService.CanAccessUserData(employeeId))
-                return Forbid();
-
-            return Ok(notes);
+            logger.LogWarning("User with id: {current} tried to access data for user with id : {id}", authzService.GetCurrentUserId(), employeeId);
+            return Forbid();
         }
-        catch (Exception ex)
-        {
-            return StatusCode(500, ex.Message);
-        }
+        var notes = nService.GetByEmployeeId(employeeId);
+        return Ok(notes);
     }
 
     [Authorize(Roles = "Admin,Lead")]
     [HttpPost]
     public ActionResult<NoteResponseDto> Create([FromBody] NoteRequestDto dto)
     {
-        try
-        {
-            var note = nService.Create(dto);
-            return CreatedAtAction(nameof(GetById), new { id = note.Id }, note);
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(500, ex.Message);
-        }
+        var note = nService.Create(dto);
+        return CreatedAtAction(nameof(GetById), new { id = note.Id }, note);
     }
 
     [Authorize(Roles = "Admin,Lead")]
     [HttpPut("{id}")]
     public ActionResult<NoteResponseDto> Update(int id, [FromBody] NoteRequestDto dto)
     {
-        try
-        {
-            var note = nService.Update(id, dto);
-            return Ok(note);
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(500, ex.Message);
-        }
+        var note = nService.Update(id, dto);
+        return Ok(note);
     }
 
     [Authorize(Roles = "Admin,Lead")]
     [HttpDelete("{id}")]
     public ActionResult Delete(int id)
     {
-        try
-        {
-            nService.Delete(id);
-            return NoContent();
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(500, ex.Message);
-        }
+        nService.Delete(id);
+        return NoContent();
     }
 }
