@@ -16,6 +16,8 @@ public static class Mapper
             cfg.CreateMap<Note, NoteResponseDto>();
             cfg.CreateMap<TaskRequestDto, Tasks>();
             cfg.CreateMap<Tasks, TaskResponseDto>();
+            cfg.CreateMap<RegistrationRequestDto, User>();
+            cfg.CreateMap<User, RegistrationResponseDto>();
         });
 
         mapper = config.CreateMapper();
