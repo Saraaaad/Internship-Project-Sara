@@ -10,6 +10,7 @@ public class DatabaseContext : DbContext
     public DbSet<Department> Departments { get; set; }
     public DbSet<Note> Notes { get; set; }
     public DbSet<Tasks> Tasks { get; set; }
+    public DbSet<Logs> Logs { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
