@@ -21,4 +21,14 @@ public class LogRepository : Repository<Logs>, ILogRepository
     {
         return _dbSet.Where(l => l.Level == level).ToList();
     }
+    public void Clear(int lastDays)
+    {
+        var date = DateTime.UtcNow.AddDays(-lastDays);
+        var oldLogs = _dbSet.Where(l => l.CreatedAt < date).ToList();
+        _dbSet.RemoveRange(oldLogs);
+    }
+    public List<Logs> GetByDateRange(DateTime from, DateTime to)
+    {
+        return _dbSet.Where(l => l.CreatedAt >= from && l.CreatedAt <= to).ToList();
+    }
 }

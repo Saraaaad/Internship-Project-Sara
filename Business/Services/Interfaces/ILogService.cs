@@ -6,6 +6,6 @@ public interface ILogService
     List<Logs> GetByDate(DateTime date);
     List<Logs> GetByDateAndLevel(DateTime date, LogLevel level);
     List<Logs> GetAllErrors();
-
-
+    void Clear(int lastDays);
+    List<Logs> GetByDateRange(DateTime from, DateTime to);
 }
