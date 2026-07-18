@@ -9,12 +9,14 @@ public class TaskController : ControllerBase
     private readonly ITaskService tService;
     private readonly IAuthorizationService authzService;
     private readonly ILogger<TaskController> logger;
+    private readonly ILogService logService;
 
-    public TaskController(ITaskService taskService, IAuthorizationService authorizationService, ILogger<TaskController> logger)
+    public TaskController(ITaskService taskService, IAuthorizationService authorizationService, ILogger<TaskController> logger, ILogService logService)
     {
         tService = taskService;
         authzService = authorizationService;
         this.logger = logger;
+        this.logService = logService;
     }
 
     [Authorize]
@@ -24,6 +26,7 @@ public class TaskController : ControllerBase
         var task = tService.GetById(id);
         if (!authzService.CanAccessUserData(task.EmployeeId))
         {
+            logService.Log(LogLevel.Warning, $"User with id: {authzService.GetCurrentUserId()} tried to access another user's task with id : {task.EmployeeId}");
             logger.LogWarning("User with id: {current} tried to access another user's task with id : {id}", authzService.GetCurrentUserId(), task.EmployeeId);
             return Forbid();
         }
@@ -36,6 +39,7 @@ public class TaskController : ControllerBase
     {
         if (!authzService.CanAccessUserData(employeeId))
         {
+            logService.Log(LogLevel.Warning, $"User with id: {authzService.GetCurrentUserId()} tried to access data for user with id : {employeeId}");
             logger.LogWarning("User with id: {current} tried to access data for user with id : {id}", authzService.GetCurrentUserId(), employeeId);
             return Forbid();
         }
@@ -75,6 +79,7 @@ public class TaskController : ControllerBase
         var task = tService.GetById(id);
         if (!authzService.CanAccessUserData(task.EmployeeId))
         {
+            logService.Log(LogLevel.Warning, $"User with id: {authzService.GetCurrentUserId()} tried to access data for user with id : {task.EmployeeId}");
             logger.LogWarning("User with id: {current} tried to access data for user with id : {id}", authzService.GetCurrentUserId(), task.EmployeeId);
             return Forbid();
         }

@@ -13,6 +13,7 @@ public static class GlobalExceptionHandler
                 var exception = context.Features.Get<IExceptionHandlerFeature>()?.Error;
                 var loggerFactory = context.RequestServices.GetRequiredService<ILoggerFactory>();
                 var logger = loggerFactory.CreateLogger("GlobalExceptionHandler");
+                var logService = context.RequestServices.GetRequiredService<ILogService>();
 
                 var (statusCode, message) = exception switch
                 {
@@ -26,8 +27,10 @@ public static class GlobalExceptionHandler
                 };
 
                 if (statusCode == HttpStatusCode.InternalServerError && exception != null)
+                {
+                    logService.Log(LogLevel.Error, exception.Message);
                     logger.LogError(exception, "An Unhandled error occurred: {Message}", exception.Message);
-
+                }
                 context.Response.StatusCode = (int)statusCode;
                 context.Response.ContentType = "application/json";
 
