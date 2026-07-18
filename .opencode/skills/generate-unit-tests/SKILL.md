@@ -557,23 +557,28 @@ The skill generates:
 
 ## Current Limitations & Future Improvements
 
-### Known Issues
+### Known Issues (Resolved)
 
-1. **DTO Type Detection** - The auto-generation script uses `object` instead of actual DTO types
-   - **Impact**: Generated tests won't compile without manual fixes
-   - **Fix Needed**: Parse controller method signatures to extract actual DTO types
+1. **DTO Type Detection** - ~~The auto-generation script uses `object` instead of actual DTO types~~ **FIXED**: Script now parses controller method signatures to extract actual DTO types and generates proper test data instances.
 
-2. **Method Parameter Handling** - Methods with complex parameters (DTOs, multiple params) aren't handled correctly
-   - **Impact**: Tests for Create, Update, ChangePassword methods fail
-   - **Fix Needed**: Parse method parameters and generate proper test data
+2. **Method Parameter Handling** - ~~Methods with complex parameters (DTOs, multiple params) aren't handled correctly~~ **FIXED**: Script now handles mixed parameter lists (primitives + DTOs) by:
+   - Using `Build-FullParamCall()` to generate correct controller calls with ALL params in order
+   - Using `Build-MockParamSetup()` to generate correct mock setups with ALL param types
+   - For `Update(int id, UserRequestDto dto)`, now generates `_controller.Update(1, testUserRequestDto)` instead of `_controller.Update(testUserRequestDto)`
 
-3. **Return Type Detection** - The script doesn't extract return types from controller methods
-   - **Impact**: Assertions use generic types instead of actual response types
-   - **Fix Needed**: Parse method return types (e.g., `ActionResult<List<UserResponseDto>>`)
+3. **Return Type Detection** - ~~The script doesn't extract return types from controller methods~~ **FIXED**: Script parses `ActionResult<T>` generic types for proper assertion types.
 
-4. **Mock Field Naming** - While fixed for constructor parameters, test methods still use generic names
-   - **Impact**: Mock setups reference wrong field names
-   - **Fix Needed**: Pass dependency metadata to test generation functions
+4. **Mock Field Naming** - ~~While fixed for constructor parameters, test methods still use generic names~~ **FIXED**: Mock setups now use correct field names from dependency metadata.
+
+5. **Exception Test Pattern** - Controllers without try/catch blocks propagate exceptions. Exception tests now use `Record.Exception()` pattern instead of asserting on `result.Result` which would never be assigned.
+
+6. **Role-Based Authorization** - `[Authorize(Roles="...")]` is enforced by ASP.NET pipeline, not by the controller. Role-based auth tests now generate proper placeholder tests noting this is tested via integration tests, instead of empty test bodies that could silently pass.
+
+### Remaining Considerations
+
+1. **Integration Test Coverage** - Role-based authorization (`[Authorize(Roles="...")]`) cannot be tested at the unit test level. Integration tests using `WebApplicationFactory` are needed for full authorization testing.
+
+2. **Global Exception Handler** - If the project uses `UseExceptionHandler` middleware, exception tests verify that the exception propagates from the controller (unit test level). The middleware catches it at the pipeline level (integration test level).
 
 ### Recommended Improvements
 

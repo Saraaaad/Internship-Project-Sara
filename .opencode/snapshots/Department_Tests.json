@@ -1,8 +1,8 @@
 {
     "controllerFile":  {
                            "path":  "D:\\Documents\\Internship\\Internship-Project-Sara\\Application\\Controllers\\DepartmentController.cs",
-                           "hash":  "6CF7F5DBACEABF4A22370EB381CC6FA005B84185CBBA7E94D797B0D7A498495A",
-                           "lastModified":  "2026-07-12T02:10:33Z"
+                           "hash":  "AF3CCEBD5375E2C24FAE923E234DB4C925735093020AEADFE1910BF4ADA9D9FF",
+                           "lastModified":  "2026-07-18T21:17:54Z"
                        },
     "coverage":  {
                      "testedActions":  15,
@@ -73,10 +73,6 @@
                        ],
     "dtoFiles":  [
                      {
-                         "hash":  "B4ACBE5B720058D54288F81FC9BC4BD58397AC61323E27392923F6413874B100",
-                         "path":  "Business\\DTOs\\Request\\ChangePasswordRequestDto.cs"
-                     },
-                     {
                          "hash":  "3D09298644A61990ADA00968A009C1318DBC207C439C37020940AB72D5B305F6",
                          "path":  "Business\\DTOs\\Request\\DepartmentRequestDto.cs"
                      },
@@ -89,7 +85,7 @@
                          "path":  "Business\\DTOs\\Request\\NoteRequestDto.cs"
                      },
                      {
-                         "hash":  "4062F8A2E6526F40F8FDCDA44F2ADA1775D6D52B64D576A18DFAC4DAD9469CAD",
+                         "hash":  "8F2C9CD7FEDA9009EDDBB157162D466EBD13EBD655AFA8A768E7A4C6194C524C",
                          "path":  "Business\\DTOs\\Request\\RegistrationRequestDto.cs"
                      },
                      {
@@ -135,7 +131,7 @@
     "testFile":  {
                      "path":  "D:\\Documents\\Internship\\Internship-Project-Sara\\InternshipProjectSara.Tests\\Controllers\\DepartmentControllerTests.cs",
                      "testCount":  15,
-                     "hash":  "5D9DE147B14FF322D6CEE55CD88BECF9197E00EA14A36B4B627801AF0CE6C18A"
+                     "hash":  "831CD738A73E5CD6694E3227F60C4AE08B833B6C8AECA9C5BADC436D97058E23"
                  },
-    "generatedAt":  "2026-07-12T14:06:51Z"
+    "generatedAt":  "2026-07-18T21:20:37Z"
 }

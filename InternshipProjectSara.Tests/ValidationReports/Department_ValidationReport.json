@@ -1,14 +1,14 @@
 {
-    "ControllerName":  "User",
+    "ControllerName":  "Department",
     "OutdatedTests":  null,
-    "GeneratedAt":  "2026-07-18 21:21:50",
+    "GeneratedAt":  "2026-07-18 21:19:40",
     "Summary":  {
                     "OutdatedTestsCount":  0,
-                    "TestedActions":  9,
-                    "TotalTestMethods":  30,
+                    "TestedActions":  6,
+                    "TotalTestMethods":  15,
                     "MissingExceptionTests":  0,
                     "MissingAuthorizationTests":  0,
-                    "TotalActions":  9,
+                    "TotalActions":  6,
                     "MissingSuccessTests":  0,
                     "MissingTestsCount":  0
                 },

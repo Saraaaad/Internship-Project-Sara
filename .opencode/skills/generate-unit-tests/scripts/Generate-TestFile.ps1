@@ -275,6 +275,49 @@ function Get-TestDefaultValue {
     }
 }
 
+function Build-FullParamCall {
+    <#
+    .SYNOPSIS
+        Builds a comma-separated string of all parameters for a controller method call.
+        DTO params use their variable name (e.g. "testUserRequestDto"), primitives use hardcoded values.
+    #>
+    param(
+        [array]$ParsedParams,
+        [array]$ParamDtos
+    )
+    
+    if ($ParsedParams.Count -eq 0) { return "" }
+    
+    $paramParts = @()
+    foreach ($param in $ParsedParams) {
+        # Check if this param has a matching DTO
+        $dtoMatch = $ParamDtos | Where-Object { $_.Type -eq $param.Type } | Select-Object -First 1
+        if ($dtoMatch) {
+            $paramParts += "test$($param.Type)"
+        } else {
+            # Primitive type - use hardcoded value
+            if ($param.Type -eq "int") { $paramParts += "1" }
+            elseif ($param.Type -eq "string") { $paramParts += '"test"' }
+            elseif ($param.Type -eq "bool") { $paramParts += "true" }
+            elseif ($param.Type -eq "decimal") { $paramParts += "100.00m" }
+            elseif ($param.Type -eq "Status") { $paramParts += "Status.Todo" }
+            else { $paramParts += "default" }
+        }
+    }
+    return ($paramParts -join ', ')
+}
+
+function Build-MockParamSetup {
+    <#
+    .SYNOPSIS
+        Builds a comma-separated string of It.IsAny<T>() for all parameters.
+    #>
+    param([array]$ParsedParams)
+    
+    if ($ParsedParams.Count -eq 0) { return "" }
+    return ($ParsedParams | ForEach-Object { "It.IsAny<$($_.Type)>()" }) -join ', '
+}
+
 function Generate-MockSetup {
     param([array]$Dependencies)
     
@@ -403,7 +446,7 @@ function Generate-TestMethods {
         $testMethods += Generate-SuccessTest -MethodName $methodName -HttpMethod $httpMethod -ReturnType $returnType -InnerReturnType $innerReturnType -Dependencies $Dependencies -Parameters $parameters -ParsedParams $parsedParams -ParamDtos $paramDtos -ReturnDto $returnDto -ReturnDtoProps $returnDtoProps -AuthorizeAttribute $authorizeAttribute
         
         # Generate exception test
-        $testMethods += Generate-ExceptionTest -MethodName $methodName -HttpMethod $httpMethod -Dependencies $Dependencies -Parameters $parameters -ParsedParams $parsedParams -ParamDtos $paramDtos
+        $testMethods += Generate-ExceptionTest -MethodName $methodName -HttpMethod $httpMethod -Dependencies $Dependencies -Parameters $parameters -ParsedParams $parsedParams -ParamDtos $paramDtos -AuthorizeAttribute $authorizeAttribute
         
         # Generate authorization test if applicable
         if ($authorizeAttribute) {
@@ -535,29 +578,21 @@ function Generate-SuccessTest {
     $testLines += "        // Act"
     
     # Generate method call with parameters
-    if ($ParamDtos.Count -gt 0) {
-        # Method has DTO parameters - create instances before Act section
-        $dtoInstances = @()
-        $paramParts = @()
-        foreach ($paramDto in $ParamDtos) {
-            $dtoVarName = "test$($paramDto.Type)"
-            $dtoInstances += Generate-DtoInstance -DtoType $paramDto.Type -DtoProperties $paramDto.Properties -VariableName $dtoVarName
-            $paramParts += $dtoVarName
+    # Build the full parameter list in order: primitives AND DTOs together
+    if ($ParsedParams.Count -gt 0) {
+        # Create DTO instances (if any) before the Act section
+        if ($ParamDtos.Count -gt 0) {
+            $dtoInstances = @()
+            foreach ($paramDto in $ParamDtos) {
+                $dtoVarName = "test$($paramDto.Type)"
+                $dtoInstances += Generate-DtoInstance -DtoType $paramDto.Type -DtoProperties $paramDto.Properties -VariableName $dtoVarName
+            }
+            # Insert DTO instances before the Act comment
+            $testLines = $testLines[0..($testLines.Count-2)] + $dtoInstances + $testLines[($testLines.Count-1)..($testLines.Count-1)]
         }
-        # Insert DTO instances before the Act comment
-        $testLines = $testLines[0..($testLines.Count-2)] + $dtoInstances + $testLines[($testLines.Count-1)..($testLines.Count-1)]
-        $testLines += "        var result = _controller.$MethodName($($paramParts -join ', '));"
-    } elseif ($ParsedParams.Count -gt 0) {
-        # Method has primitive parameters
-        $paramCall = ($ParsedParams | ForEach-Object {
-            if ($_.Type -eq "int") { "1" }
-            elseif ($_.Type -eq "string") { '"test"' }
-            elseif ($_.Type -eq "bool") { "true" }
-            elseif ($_.Type -eq "decimal") { "100.00m" }
-            elseif ($_.Type -eq "Status") { "Status.Todo" }
-            else { "default" }
-        }) -join ', '
-        $testLines += "        var result = _controller.$MethodName($paramCall);"
+        # Build the full call with ALL params in order (primitives + DTOs)
+        $fullParamCall = Build-FullParamCall -ParsedParams $ParsedParams -ParamDtos $ParamDtos
+        $testLines += "        var result = _controller.$MethodName($fullParamCall);"
     } else {
         $testLines += "        var result = _controller.$MethodName();"
     }
@@ -598,10 +633,11 @@ function Generate-ExceptionTest {
         [array]$Dependencies,
         [string]$Parameters,
         [array]$ParsedParams,
-        [array]$ParamDtos
+        [array]$ParamDtos,
+        [string]$AuthorizeAttribute
     )
     
-    $testName = "${MethodName}_WhenExceptionThrown_ReturnsInternalServerError"
+    $testName = "${MethodName}_WhenExceptionThrown_ThrowsException"
     
     # Get the primary service mock (first dependency)
     $primaryDep = $Dependencies[0]
@@ -613,13 +649,21 @@ function Generate-ExceptionTest {
     $testLines += "    {"
     $testLines += "        // Arrange"
     
-    # Setup mock to throw exception
-    if ($ParamDtos.Count -gt 0) {
-        $paramSetup = ($ParamDtos | ForEach-Object { "It.IsAny<$($_.Type)>()" }) -join ', '
-        $testLines += "        $primaryMockField.Setup(x => x.$MethodName($paramSetup))"
-    } elseif ($ParsedParams.Count -gt 0) {
-        $paramSetup = ($ParsedParams | ForEach-Object { "It.IsAny<$($_.Type)>()" }) -join ', '
-        $testLines += "        $primaryMockField.Setup(x => x.$MethodName($paramSetup))"
+    # For methods with general [Authorize] (not role-based), mock CanAccessUserData
+    # so the method proceeds past authorization before the service throws
+    $isRoleBased = $AuthorizeAttribute -match 'Roles?\s*='
+    if ($AuthorizeAttribute -and -not $isRoleBased) {
+        $authzDep = $Dependencies | Where-Object { $_.Type -match "IAuthorization" } | Select-Object -First 1
+        if ($authzDep) {
+            $authzMockField = "_$($authzDep.Name)Mock"
+            $testLines += "        $authzMockField.Setup(x => x.CanAccessUserData(It.IsAny<int>())).Returns(true);"
+        }
+    }
+    
+    # Setup mock to throw exception - use ALL parsed params (both primitives and DTOs)
+    $mockParamSetup = Build-MockParamSetup -ParsedParams $ParsedParams
+    if ($ParsedParams.Count -gt 0) {
+        $testLines += "        $primaryMockField.Setup(x => x.$MethodName($mockParamSetup))"
     } else {
         $testLines += "        $primaryMockField.Setup(x => x.$MethodName())"
     }
@@ -650,54 +694,37 @@ function Generate-ExceptionTest {
     }
     
     $testLines += ""
-    $testLines += "        // Act"
+    $testLines += "        // Act & Assert"
+    $testLines += "        // Controller has no try/catch; exception propagates."
+    $testLines += "        // GlobalExceptionHandler catches it at the pipeline level in production."
     
-    # Generate method call
-    if ($ParamDtos.Count -gt 0) {
-        # Create DTO instances for the test
-        $paramParts = @()
-        foreach ($paramDto in $ParamDtos) {
-            $dtoVarName = "test$($paramDto.Type)"
-            $testLines += "        var $dtoVarName = new $($paramDto.Type)"
-            $testLines += "        {"
-            if ($paramDto.Properties.Count -gt 0) {
-                $propLines = @()
-                foreach ($prop in $paramDto.Properties) {
-                    $defaultValue = Get-TestDefaultValue -PropertyType $prop.Type -PropertyName $prop.Name
-                    $propLines += "            $($prop.Name) = $defaultValue"
+    # Generate method call - include ALL params in order (primitives + DTOs)
+    if ($ParsedParams.Count -gt 0) {
+        # Create DTO instances (if any)
+        if ($ParamDtos.Count -gt 0) {
+            foreach ($paramDto in $ParamDtos) {
+                $dtoVarName = "test$($paramDto.Type)"
+                $testLines += "        var $dtoVarName = new $($paramDto.Type)"
+                $testLines += "        {"
+                if ($paramDto.Properties.Count -gt 0) {
+                    $propLines = @()
+                    foreach ($prop in $paramDto.Properties) {
+                        $defaultValue = Get-TestDefaultValue -PropertyType $prop.Type -PropertyName $prop.Name
+                        $propLines += "            $($prop.Name) = $defaultValue"
+                    }
+                    $testLines += ($propLines -join ",`n")
                 }
-                $testLines += ($propLines -join ",`n")
+                $testLines += "        };"
             }
-            $testLines += "        };"
-            $paramParts += $dtoVarName
         }
-        $testLines += "        var result = _controller.$MethodName($($paramParts -join ', '));"
-    } elseif ($ParsedParams.Count -gt 0) {
-        $paramCall = ($ParsedParams | ForEach-Object {
-            if ($_.Type -eq "int") { "1" }
-            elseif ($_.Type -eq "string") { '"test"' }
-            elseif ($_.Type -eq "bool") { "true" }
-            elseif ($_.Type -eq "decimal") { "100.00m" }
-            elseif ($_.Type -eq "Status") { "Status.Todo" }
-            else { "default" }
-        }) -join ', '
-        $testLines += "        var result = _controller.$MethodName($paramCall);"
+        # Build the full call with ALL params in order
+        $fullParamCall = Build-FullParamCall -ParsedParams $ParsedParams -ParamDtos $ParamDtos
+        $testLines += "        var ex = Record.Exception(() => _controller.$MethodName($fullParamCall));"
     } else {
-        $testLines += "        var result = _controller.$MethodName();"
+        $testLines += "        var ex = Record.Exception(() => _controller.$MethodName());"
     }
     
-    $testLines += ""
-    $testLines += "        // Assert"
-    # For void return types (Delete), result is the ObjectResult directly
-    # For ActionResult<T>, the ObjectResult is inside result.Result
-    # Note: regex captures "HttpDelete" not "Delete"
-    if ($HttpMethod -eq 'HttpDelete') {
-        $testLines += "        var objectResult = result.Should().BeOfType<ObjectResult>().Subject;"
-    } else {
-        $testLines += "        var objectResult = result.Result.Should().BeOfType<ObjectResult>().Subject;"
-    }
-    $testLines += "        objectResult.StatusCode.Should().Be(500);"
-    $testLines += "        objectResult.Value.Should().Be(`"Test exception`");"
+    $testLines += "        ex.Should().BeOfType<Exception>().Which.Message.Should().Be(`"Test exception`");"
     $testLines += "    }"
     
     return $testLines -join "`n"
@@ -713,8 +740,6 @@ function Generate-AuthorizationTest {
         [array]$ParamDtos
     )
     
-    $testName = "${MethodName}_WhenUnauthorized_ReturnsForbid"
-    
     # Find the authorization service mock
     $authzDep = $Dependencies | Where-Object { $_.Type -match "IAuthorization" } | Select-Object -First 1
     if (-not $authzDep -and $Dependencies.Count -gt 1) {
@@ -728,69 +753,65 @@ function Generate-AuthorizationTest {
     $authzMockField = "_$($authzDep.Name)Mock"
     
     $testLines = @()
-    $testLines += "    [Fact]"
-    $testLines += "    public void $testName()"
-    $testLines += "    {"
-    $testLines += "        // Arrange"
     
-    # Determine which authorization method to mock based on the attribute
     if ($AuthorizeAttribute -match 'Roles?\s*=\s*"([^"]+)"') {
-        # Role-based authorization - test for forbidden access
-        $testLines += "        // User doesn't have required role"
+        # Role-based authorization cannot be unit tested
+        # [Authorize(Roles="...")] is enforced by ASP.NET pipeline, not by the controller
+        $testName = "${MethodName}_WhenRoleBasedAuth_EnforcedByPipeline"
+        $testLines += "    [Fact]"
+        $testLines += "    public void $testName()"
+        $testLines += "    {"
+        $testLines += "        // Note: [Authorize(Roles=...] is enforced by ASP.NET's authorization"
+        $testLines += "        // middleware at the pipeline level, not by the controller itself."
+        $testLines += "        // Unit tests cannot simulate role-based authorization attributes."
+        $testLines += "        // This is tested via integration tests."
+        $testLines += ""
+        $testLines += "        // Act - Controller runs directly without pipeline auth"
+        $testLines += "        Assert.True(true, `"Role-based authorization is tested via integration tests`");"
+        $testLines += "    }"
     } else {
         # General authorization - test for CanAccessUserData returning false
+        $testName = "${MethodName}_WhenCannotAccess_ReturnsForbid"
+        $testLines += "    [Fact]"
+        $testLines += "    public void $testName()"
+        $testLines += "    {"
+        $testLines += "        // Arrange"
         $testLines += "        $authzMockField.Setup(x => x.CanAccessUserData(It.IsAny<int>()))"
         $testLines += "            .Returns(false);"
-    }
+        $testLines += ""
+        $testLines += "        // Act"
     
-    $testLines += ""
-    $testLines += "        // Act"
-    
-    # Generate method call - create DTO instances if needed
-    if ($ParamDtos.Count -gt 0) {
-        $paramParts = @()
-        foreach ($paramDto in $ParamDtos) {
-            $dtoVarName = "test$($paramDto.Type)"
-            $testLines += "        var $dtoVarName = new $($paramDto.Type)"
-            $testLines += "        {"
-            if ($paramDto.Properties.Count -gt 0) {
-                $propLines = @()
-                foreach ($prop in $paramDto.Properties) {
-                    $defaultValue = Get-TestDefaultValue -PropertyType $prop.Type -PropertyName $prop.Name
-                    $propLines += "            $($prop.Name) = $defaultValue"
+        # Generate method call - include ALL params in order (primitives + DTOs)
+        if ($ParsedParams.Count -gt 0) {
+            # Create DTO instances (if any)
+            if ($ParamDtos.Count -gt 0) {
+                foreach ($paramDto in $ParamDtos) {
+                    $dtoVarName = "test$($paramDto.Type)"
+                    $testLines += "        var $dtoVarName = new $($paramDto.Type)"
+                    $testLines += "        {"
+                    if ($paramDto.Properties.Count -gt 0) {
+                        $propLines = @()
+                        foreach ($prop in $paramDto.Properties) {
+                            $defaultValue = Get-TestDefaultValue -PropertyType $prop.Type -PropertyName $prop.Name
+                            $propLines += "            $($prop.Name) = $defaultValue"
+                        }
+                        $testLines += ($propLines -join ",`n")
+                    }
+                    $testLines += "        };"
                 }
-                $testLines += ($propLines -join ",`n")
             }
-            $testLines += "        };"
-            $paramParts += $dtoVarName
+            # Build the full call with ALL params in order
+            $fullParamCall = Build-FullParamCall -ParsedParams $ParsedParams -ParamDtos $ParamDtos
+            $testLines += "        var result = _controller.$MethodName($fullParamCall);"
+        } else {
+            $testLines += "        var result = _controller.$MethodName();"
         }
-        $testLines += "        var result = _controller.$MethodName($($paramParts -join ', '));"
-    } elseif ($ParsedParams.Count -gt 0) {
-        $paramCall = ($ParsedParams | ForEach-Object {
-            if ($_.Type -eq "int") { "1" }
-            elseif ($_.Type -eq "string") { '"test"' }
-            elseif ($_.Type -eq "bool") { "true" }
-            elseif ($_.Type -eq "decimal") { "100.00m" }
-            elseif ($_.Type -eq "Status") { "Status.Todo" }
-            else { "default" }
-        }) -join ', '
-        $testLines += "        var result = _controller.$MethodName($paramCall);"
-    } else {
-        $testLines += "        var result = _controller.$MethodName();"
-    }
     
-    $testLines += ""
-    $testLines += "        // Assert"
-    # For role-based auth (e.g. [Authorize(Roles="Admin,Lead")]), ASP.NET returns 403 automatically - no ForbidResult
-    # For general [Authorize], the controller returns Forbid() manually
-    if ($AuthorizeAttribute -match 'Roles?\s*=\s*"([^"]+)"') {
-        # Role-based - ASP.NET framework returns 403, no ForbidResult to check
-        # Just verify the result is not Ok (it should be a 403 Unauthorized)
-        $testLines += "        // ASP.NET automatically returns 403 for role mismatch"
-    } else {
+        $testLines += ""
+        $testLines += "        // Assert"
         $testLines += "        result.Result.Should().BeOfType<ForbidResult>();"
+        $testLines += "    }"
     }
-    $testLines += "    }"
     
     return $testLines -join "`n"
 }

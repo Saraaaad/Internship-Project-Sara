@@ -1,8 +1,8 @@
 {
     "controllerFile":  {
                            "path":  "D:\\Documents\\Internship\\Internship-Project-Sara\\Application\\Controllers\\UserController.cs",
-                           "hash":  "DD4C4438FF685AFB1F7262CAF11AD2FB72181EA01F22B2E5B05A8806E3714495",
-                           "lastModified":  "2026-07-12T02:26:31Z"
+                           "hash":  "84C7AA9151FE3094232F7779A32B9A69552FCBFEB59E609D7F2EFB25DB01E584",
+                           "lastModified":  "2026-07-18T21:17:54Z"
                        },
     "coverage":  {
                      "testedActions":  30,
@@ -133,10 +133,6 @@
                        ],
     "dtoFiles":  [
                      {
-                         "hash":  "B4ACBE5B720058D54288F81FC9BC4BD58397AC61323E27392923F6413874B100",
-                         "path":  "Business\\DTOs\\Request\\ChangePasswordRequestDto.cs"
-                     },
-                     {
                          "hash":  "3D09298644A61990ADA00968A009C1318DBC207C439C37020940AB72D5B305F6",
                          "path":  "Business\\DTOs\\Request\\DepartmentRequestDto.cs"
                      },
@@ -149,7 +145,7 @@
                          "path":  "Business\\DTOs\\Request\\NoteRequestDto.cs"
                      },
                      {
-                         "hash":  "4062F8A2E6526F40F8FDCDA44F2ADA1775D6D52B64D576A18DFAC4DAD9469CAD",
+                         "hash":  "8F2C9CD7FEDA9009EDDBB157162D466EBD13EBD655AFA8A768E7A4C6194C524C",
                          "path":  "Business\\DTOs\\Request\\RegistrationRequestDto.cs"
                      },
                      {
@@ -195,7 +191,7 @@
     "testFile":  {
                      "path":  "D:\\Documents\\Internship\\Internship-Project-Sara\\InternshipProjectSara.Tests\\Controllers\\UserControllerTests.cs",
                      "testCount":  30,
-                     "hash":  "462DF5D38F7F6188FB6821305426212AF425E7242D59619770E447DE26B27F6D"
+                     "hash":  "7444612D1875AD133466D99F98AE96CF58860FC73458307E528C1C0242E5ABD1"
                  },
-    "generatedAt":  "2026-07-12T12:13:16Z"
+    "generatedAt":  "2026-07-18T21:22:15Z"
 }

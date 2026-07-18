@@ -1,5 +1,6 @@
 ﻿using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Moq;
 using Xunit;
 
@@ -10,13 +11,14 @@ public class TaskControllerTests
     private readonly Mock<ITaskService> _taskServiceMock;
     private readonly Mock<IAuthorizationService> _authorizationServiceMock;
     private readonly TaskController _controller;
+    private readonly Mock<ILogger<TaskController>> loggerMock;
 
     public TaskControllerTests()
     {
         _taskServiceMock = new Mock<ITaskService>();
         _authorizationServiceMock = new Mock<IAuthorizationService>();
         _controller = new TaskController(
-            _taskServiceMock.Object, _authorizationServiceMock.Object
+            _taskServiceMock.Object, _authorizationServiceMock.Object, loggerMock.Object
         );
     }
 
