@@ -5,11 +5,11 @@ public class User : EntityTracker
     public string Email { get; private set; }
     public string Password { get; private set; }
     public Role Role { get; private set; }
-    public string SerialNumber { get; private set; }
+    public string? SerialNumber { get; private set; }
     public string FullName { get; private set; }
-    public string Phone { get; private set; }
-    public Salary Salary { get; private set; }
-    public int DepartmentId { get; private set; }
+    public string? Phone { get; private set; }
+    public Salary? Salary { get; private set; }
+    public int? DepartmentId { get; private set; }
     public string? LeadSerialNumber { get; private set; }
     public Department Department { get; set; }
     public List<Tasks> Tasks { get; set; }
