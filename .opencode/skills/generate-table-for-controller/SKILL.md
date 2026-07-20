@@ -7,6 +7,13 @@ description: Generate a single table/list component from parsed controller metad
 
 Generate one table component for a controller's list/index action.
 
+## Frontend Stack
+
+- **React 19** + **TypeScript** functional components
+- CSS classes (not CSS modules, not Tailwind, not styled-components)
+- No external UI libraries — pure HTML + CSS
+- **sonner** for toast notifications
+
 ## Input
 
 You receive parsed controller metadata (from `parse-csharp-controller`):
@@ -20,9 +27,92 @@ You receive parsed controller metadata (from `parse-csharp-controller`):
 
 ## What to generate
 
-### 1. Table component
-- Toolbar: search input (debounced 300ms), filter controls, "Add New" button linking to create page
-- Column headers mapped from response DTO properties:
+### 1. Component structure
+
+**Location:** `Frontend/src/components/{ResourceName}Table.tsx`
+
+```typescript
+import React, { useState } from 'react';
+import type { ResponseType } from '../types/{resourceName}.types';
+
+interface {ResourceName}TableProps {
+  data: ResponseType[];
+  loading: boolean;
+  onRefresh: () => void;
+  onEdit: (item: ResponseType) => void;
+  onDelete: (id: number) => void;
+  onView: (item: ResponseType) => void;
+}
+
+export const {ResourceName}Table: React.FC<{ResourceName}TableProps> = ({
+  data,
+  loading,
+  onRefresh,
+  onEdit,
+  onDelete,
+  onView,
+}) => {
+  // Component implementation
+};
+```
+
+### 2. Table implementation
+
+Follow the pattern from `LogTable.tsx`:
+
+```tsx
+// Loading state
+if (loading) {
+  return <div className="loading-state">Loading {resourceName}s...</div>;
+}
+
+// Empty state
+if (data.length === 0) {
+  return (
+    <div className="empty-state">
+      <p>No {resourceName}s found</p>
+      <button onClick={onRefresh} className="btn btn-primary">Refresh</button>
+    </div>
+  );
+}
+
+// Table with data
+return (
+  <div className="table-container">
+    <table className="{resourceName}-table">
+      <thead>
+        <tr>
+          {/* Column headers from DTO properties */}
+          <th>ID</th>
+          <th>Name</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {data.map((item) => (
+          <tr key={item.id}>
+            <td>{item.id}</td>
+            <td>{item.name}</td>
+            <td>
+              <button className="btn btn-detail" onClick={() => onView(item)}>
+                View
+              </button>
+              <button className="btn btn-secondary" onClick={() => onEdit(item)}>
+                Edit
+              </button>
+              <button className="btn btn-danger" onClick={() => onDelete(item.id)}>
+                Delete
+              </button>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+);
+```
+
+### 3. Column display rules
 
 | C# type | Column display |
 |---|---|
@@ -35,25 +125,10 @@ You receive parsed controller metadata (from `parse-csharp-controller`):
 | Nullable `T?` | Show "—" for null |
 | `List<T>`, `IEnumerable<T>` | First-N with "+N more" badge |
 | `decimal` (currency) | Formatted currency |
-| `byte[]` | Thumbnail/avatar |
 
-- Action column with buttons matching controller actions:
-  - GET by id → "View" button/link
-  - PUT/PATCH → "Edit" button
-  - DELETE → "Delete" button with confirm dialog
-- Pagination matching the API's paging model:
-  - Page-based: page numbers, "1-10 of 42", page size dropdown
-  - OData-style: `$top`/`$skip` controls
-  - Cursor-based: "Load more" button
-- Loading skeleton while data loads
-- Empty state with CTA when no data
-- Error state with retry button
-- Filtered-empty state with "Clear filters" action
+### 4. Sorting and filtering
 
-### 2. Sorting and filtering
 - Sortable columns: clicking header toggles asc/desc/none
-- Send sort as `?sortBy=name&sortDir=asc`
-- Debounce search input (300ms)
 - Filter controls per property type:
   - `string` → text input
   - `Enum` → multi-select dropdown
@@ -61,17 +136,75 @@ You receive parsed controller metadata (from `parse-csharp-controller`):
   - `DateTime` → date range picker
   - `decimal` → min/max range inputs
 - Show active filter chips with remove buttons
-- Sync sort/filter/page to URL query params
 
-### 3. API integration
-- GET `{routePrefix}?page=1&pageSize=10&search=...&sortBy=...&sortDir=...` → typed response
-- Parse paginated response: `{ items: T[], totalCount: number, page: number, pageSize: number }`
-- Handle `ProblemDetails` error responses
+### 5. Selection (optional)
+
+If the controller supports bulk operations, add checkbox selection:
+```tsx
+// Add to props
+selectedItems: number[];
+onSelectItem: (id: number) => void;
+onSelectAll: () => void;
+onDeleteSelected: () => void;
+
+// Toolbar with bulk actions
+{selectedItems.length > 0 && (
+  <div className="table-toolbar">
+    <button onClick={onDeleteSelected} className="btn btn-danger">
+      Delete Selected ({selectedItems.length})
+    </button>
+  </div>
+)}
+
+// Checkbox column
+<td>
+  <input
+    type="checkbox"
+    checked={selectedItems.includes(item.id)}
+    onChange={() => onSelectItem(item.id)}
+  />
+</td>
+```
+
+### 6. CSS classes to use
+
+Use these CSS classes (already defined in the design system):
+- `.table-container` — white card with shadow
+- `.{resourceName}-table` — full-width table
+- `.loading-state` — centered loading text
+- `.empty-state` — centered empty message with CTA
+- `.btn` — base button style
+- `.btn-primary` — blue action button
+- `.btn-secondary` — gray button
+- `.btn-danger` — red delete button
+- `.btn-detail` — small blue button
+- `.badge` — colored badge
+- `.badge-error`, `.badge-warning`, `.badge-info` — level-specific badges
+
+### 7. Detail modal (optional)
+
+If the controller has a detail view, include a modal:
+```tsx
+const [viewingItem, setViewingItem] = useState<ResponseType | null>(null);
+
+{viewingItem && (
+  <div className="modal-overlay" onClick={() => setViewingItem(null)}>
+    <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+      <div className="modal-header">
+        <h2>{ResourceName} Details</h2>
+        <button className="modal-close" onClick={() => setViewingItem(null)}>✕</button>
+      </div>
+      <div className="modal-body">
+        {/* Display all properties */}
+      </div>
+    </div>
+  </div>
+)}
+```
 
 ## Location
 
-Save to: `Frontend/{resourceName}/Components/{resourceName}Table.tsx`
-(or `.razor` for Blazor)
+Save to: `Frontend/src/components/{ResourceName}Table.tsx`
 
 ## Do NOT
 
@@ -79,3 +212,4 @@ Save to: `Frontend/{resourceName}/Components/{resourceName}Table.tsx`
 - Generate API client services (that's `generate-api-client-for-controller`)
 - Generate page-level layout or routing
 - Parse the controller file (use parsed metadata already provided)
+- Use CSS modules, Tailwind, or styled-components — use plain CSS classes

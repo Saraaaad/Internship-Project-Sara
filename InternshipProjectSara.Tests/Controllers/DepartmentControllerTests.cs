@@ -17,7 +17,7 @@ public class DepartmentControllerTests
         _departmentServiceMock = new Mock<IDepartmentService>();
         _authorizationServiceMock = new Mock<IAuthorizationService>();
         _controller = new DepartmentController(
-            _departmentServiceMock.Object, _authorizationServiceMock.Object
+            _departmentServiceMock.Object
         );
     }
 
