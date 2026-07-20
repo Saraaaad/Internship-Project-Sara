@@ -112,7 +112,53 @@ public class LogService : ILogService
             logger.LogWarning("Failed, From date must be less than to date");
             throw new ValidationException("From date must be less than to date");
         }
+
+        var fromDate = from.Date;
+        var toDate = to.Date.AddDays(1).AddTicks(-1);
+
         var logs = logRepository.GetByDateRange(from, to);
+        return logs;
+    }
+
+    public void DeleteLog(int id)
+    {
+        var log = logRepository.GetById(id);
+        if (id <= 0)
+        {
+            logger.LogWarning("Failed, Id must be greater than 0");
+            throw new ValidationException("Id must be greater than 0");
+        }
+        if (log == null)
+        {
+            logger.LogWarning("Log not found");
+            throw new ValidationException("Log not found");
+        }
+        logRepository.Delete(id);
+        _context.SaveChanges();
+        logger.LogInformation("Log deleted successfully");
+    }
+
+    public List<Logs> GetByDateRangeAndLevel(DateTime from, DateTime to, LogLevel level)
+    {
+        if (from.Date > DateTime.UtcNow.Date || to.Date > DateTime.UtcNow.Date)
+        {
+            logger.LogWarning("Failed, Date must be in the past or today");
+            throw new ValidationException("Date must be in the past or today");
+        }
+        if (from.Date > to.Date)
+        {
+            logger.LogWarning("Failed, From date must be less than to date");
+            throw new ValidationException("From date must be less than to date");
+        }
+        if (!Enum.IsDefined(typeof(LogLevel), level))
+        {
+            logger.LogWarning("Failed, Invalid log level. Valid levels are: " + string.Join(", ", Enum.GetNames(typeof(LogLevel))));
+            throw new ValidationException("Invalid log level. Valid levels are: " + string.Join(", ", Enum.GetNames(typeof(LogLevel))));
+        }
+        var fromDate = from.Date;
+        var toDate = to.Date.AddDays(1).AddTicks(-1);
+
+        var logs = logRepository.GetByDateRangeAndLevel(from, to, level);
         return logs;
     }
 }

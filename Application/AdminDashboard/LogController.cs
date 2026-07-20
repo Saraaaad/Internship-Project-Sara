@@ -61,4 +61,25 @@ public class LogController : ControllerBase
         var logs = logService.GetByDateRange(from, to);
         return Ok(logs);
     }
+
+    [HttpDelete("{id}")]
+    public IActionResult DeleteLog(int id)
+    {
+        try
+        {
+            logService.DeleteLog(id);
+            return NoContent();
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+
+    [HttpGet("date-range-level/{from}/{to}/{level}")]
+    public IActionResult GetByDateRangeAndLevel(DateTime from, DateTime to, LogLevel level)
+    {
+        var logs = logService.GetByDateRangeAndLevel(from, to, level);
+        return Ok(logs);
+    }
 }

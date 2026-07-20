@@ -37,6 +37,22 @@ builder.Services.AddJwtAuthentication(builder.Configuration);
 
 // Add Controllers
 builder.Services.AddControllers();
+// Swagger config
+builder.Services.AddSwagger();
+
+// CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowReactApp",
+        policy =>
+        {
+            policy.WithOrigins("http://localhost:5173")
+                  .AllowAnyHeader()
+                  .AllowAnyMethod()
+                  .AllowCredentials();
+        });
+});
+
 
 var app = builder.Build();
 
@@ -46,6 +62,12 @@ using (var scope = app.Services.CreateScope())
     var context = scope.ServiceProvider.GetRequiredService<DatabaseContext>();
     context.Database.Migrate();
 }
+
+// Swagger UI
+app.UseSwagger();
+app.UseSwaggerUI();
+
+app.UseCors("AllowReactApp");  // ← This must be before UseAuthentication
 
 // init GlobalExceptionHandler
 GlobalExceptionHandler.Configure(app);
