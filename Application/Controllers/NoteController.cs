@@ -8,12 +8,14 @@ public class NoteController : ControllerBase
     private readonly INoteService nService;
     private readonly IAuthorizationService authzService;
     private readonly ILogger<NoteController> logger;
+    private readonly ILogService logService;
 
-    public NoteController(INoteService noteService, IAuthorizationService authorizationService, ILogger<NoteController> logger)
+    public NoteController(INoteService noteService, IAuthorizationService authorizationService, ILogger<NoteController> logger, ILogService logService)
     {
         nService = noteService;
         authzService = authorizationService;
         this.logger = logger;
+        this.logService = logService;
     }
 
     [Authorize]
@@ -23,6 +25,7 @@ public class NoteController : ControllerBase
         var note = nService.GetById(id);
         if (!authzService.CanAccessUserData(note.EmployeeId))
         {
+            logService.Log(LogLevel.Warning, $"User with id: {authzService.GetCurrentUserId()} tried to access data for user with id : {note.EmployeeId}");
             logger.LogWarning("User with id: {current} tried to access data for user with id : {id}", authzService.GetCurrentUserId(), note.EmployeeId);
             return Forbid();
         }
@@ -35,6 +38,7 @@ public class NoteController : ControllerBase
     {
         if (!authzService.CanAccessUserData(employeeId))
         {
+            logService.Log(LogLevel.Warning, $"User with id: {authzService.GetCurrentUserId()} tried to access data for user with id : {employeeId}");
             logger.LogWarning("User with id: {current} tried to access data for user with id : {id}", authzService.GetCurrentUserId(), employeeId);
             return Forbid();
         }

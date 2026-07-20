@@ -6,4 +6,5 @@ public interface ILogRepository: IRepository<Logs>
     List<Logs> GetByDateAndLevel(DateTime date, LogLevel level);
     void Clear(int LastDays);
     List<Logs> GetByDateRange(DateTime from, DateTime to);
+    List<Logs> GetByDateRangeAndLevel(DateTime from, DateTime to, LogLevel level);
 }

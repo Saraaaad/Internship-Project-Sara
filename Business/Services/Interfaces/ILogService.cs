@@ -8,4 +8,6 @@ public interface ILogService
     List<Logs> GetAllErrors();
     void Clear(int lastDays);
     List<Logs> GetByDateRange(DateTime from, DateTime to);
+    void DeleteLog(int id);
+    List<Logs> GetByDateRangeAndLevel(DateTime from, DateTime to, LogLevel level);
 }

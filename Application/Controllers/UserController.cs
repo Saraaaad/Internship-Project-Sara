@@ -8,12 +8,14 @@ public class UserController : ControllerBase
     private readonly IUserService uService;
     private readonly IAuthorizationService authzService;
     private readonly ILogger<UserController> logger;
+    private readonly ILogService logService;
 
-    public UserController(IUserService userService, IAuthorizationService authorizationService, ILogger<UserController> logger)
+    public UserController(IUserService userService, IAuthorizationService authorizationService, ILogger<UserController> logger, ILogService logService)
     {
         uService = userService;
         authzService = authorizationService;
         this.logger = logger;
+        this.logService = logService;
     }
 
     [Authorize(Roles = "Admin,HR")]
@@ -29,6 +31,7 @@ public class UserController : ControllerBase
     public ActionResult<UserResponseDto> GetById(int id)
     {
         if (!authzService.CanAccessUserData(id)){
+            logService.Log(LogLevel.Warning, $"User with id: {authzService.GetCurrentUserId()} tried to access data for user with id : {id}");
             logger.LogWarning("User with id: {currentId} tried to access data for user with id : {id}" , authzService.GetCurrentUserId() ,id);
             return Forbid();
         }

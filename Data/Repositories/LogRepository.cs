@@ -31,4 +31,8 @@ public class LogRepository : Repository<Logs>, ILogRepository
     {
         return _dbSet.Where(l => l.CreatedAt >= from && l.CreatedAt <= to).ToList();
     }
+    public List<Logs> GetByDateRangeAndLevel(DateTime from, DateTime to, LogLevel level)
+    {
+        return _dbSet.Where(l => l.CreatedAt >= from && l.CreatedAt <= to && l.Level == level).ToList();
+    }
 }

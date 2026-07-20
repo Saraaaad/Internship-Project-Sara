@@ -20,12 +20,14 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IDepartmentRepository, DepartmentRepository>();
 builder.Services.AddScoped<INoteRepository, NoteRepository>();
 builder.Services.AddScoped<ITaskRepository, TaskRepository>();
+builder.Services.AddScoped<ILogRepository, LogRepository>();
 
 // Add Services
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IDepartmentService, DepartmentService>();
 builder.Services.AddScoped<INoteService, NoteService>();
 builder.Services.AddScoped<ITaskService, TaskService>();
+builder.Services.AddScoped<ILogService, LogService>();
 
 // Authentication and Authorization
 builder.Services.AddHttpContextAccessor(); 
@@ -35,6 +37,22 @@ builder.Services.AddJwtAuthentication(builder.Configuration);
 
 // Add Controllers
 builder.Services.AddControllers();
+// Swagger config
+builder.Services.AddSwagger();
+
+// CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowReactApp",
+        policy =>
+        {
+            policy.WithOrigins("http://localhost:5173")
+                  .AllowAnyHeader()
+                  .AllowAnyMethod()
+                  .AllowCredentials();
+        });
+});
+
 
 var app = builder.Build();
 
@@ -42,8 +60,14 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<DatabaseContext>();
-    context.Database.EnsureCreated();
+    context.Database.Migrate();
 }
+
+// Swagger UI
+app.UseSwagger();
+app.UseSwaggerUI();
+
+app.UseCors("AllowReactApp");  // ← This must be before UseAuthentication
 
 // init GlobalExceptionHandler
 GlobalExceptionHandler.Configure(app);
