@@ -84,7 +84,7 @@ public class UserService : IUserService
         return user.ToDto<User, UserResponseDto>();
     }
 
-    public UserResponseDto Update(int id, UserRequestDto dto)
+    public UserResponseDto Update(int id, UserUpdateDto dto)
     {
         logger.LogInformation("Updating user with ID: {id}", id);
         logService.Log(LogLevel.Information, $"Updating user with ID: {id}");
@@ -97,27 +97,26 @@ public class UserService : IUserService
             logService.Log(LogLevel.Warning, $"User with ID: {id} not found");
             throw new NotFoundException("User", id);
         }
-        var transaction = _context.Database.BeginTransaction();
-
-        try
+        user.UpdateProfile(dto.FullName, dto.Email, dto.Phone);
+        if (dto.DepartmentId.HasValue)
         {
-            user.UpdateProfile(dto.FullName, dto.Phone, dto.Email);
-            user.ChangeRole(dto.Role);
-            user.AssignDepartment(dto.DepartmentId ?? 0);
-            user.UpdateSalary(dto.SalaryAmount, dto.SalaryBonus, dto.SalaryCurrency);
+            user.AssignDepartment(dto.DepartmentId.Value);
+            if (string.IsNullOrEmpty(user.SerialNumber))
+            {
+                var department = drepository.GetById(dto.DepartmentId.Value);
+                if (department == null)
+                    throw new NotFoundException("Department", dto.DepartmentId.Value);
 
+                user.SetSerialNumber(
+                    SerialNumberGenerator.Generate(department.DepartmentCode, user.Id));
+            }
+        }
 
-            urepository.Update(user);
-            _context.SaveChanges();
-            logger.LogInformation("User with ID: {id} updated successfully", user.Id);
-            logService.Log(LogLevel.Information, $"User with ID: {user.Id} updated successfully");
-            return user.ToDto<User, UserResponseDto>();
-        }
-        catch (Exception)
-        {
-            transaction.Rollback();
-            throw;
-        }
+        urepository.Update(user);
+        _context.SaveChanges();
+        logger.LogInformation("User with ID: {id} updated successfully", user.Id);
+        logService.Log(LogLevel.Information, $"User with ID: {user.Id} updated successfully");
+        return user.ToDto<User, UserResponseDto>();
     }
 
     public void Delete(int id)
@@ -131,8 +130,23 @@ public class UserService : IUserService
             logService.Log(LogLevel.Warning, $"User with ID: {id} not found");
             throw new NotFoundException("User", id);
         }
-        urepository.Delete(id);
-        _context.SaveChanges();
+        var transaction = _context.Database.BeginTransaction();
+        try
+        {
+            var notes = _context.Notes.Where(n => n.EmployeeId == id);
+            _context.Notes.RemoveRange(notes);
+            var tasks = _context.Tasks.Where(t => t.EmployeeId == id);
+            _context.Tasks.RemoveRange(tasks);
+
+            urepository.Delete(id);
+            _context.SaveChanges();
+            transaction.Commit();
+        }
+        catch (Exception)
+        {
+            transaction.Rollback();
+            throw;
+        }
         logger.LogInformation("User with ID: {id} deleted successfully", id);
         logService.Log(LogLevel.Information, $"User with ID: {id} deleted successfully");
     }
@@ -215,5 +229,23 @@ public class UserService : IUserService
         logger.LogInformation("User with username: {username} retrieved successfully", username);
         logService.Log(LogLevel.Information, $"User with username: {username} retrieved successfully");
         return user.ToDto<User, UserResponseDto>();
+    }
+    public void ChangeRole(int userId, RoleChangeDto dto)
+    {
+        logger.LogInformation("Changing role for user with ID: {userId} to {role}", userId, dto.Role);
+        logService.Log(LogLevel.Information, $"Changing role for user with ID: {userId} to {dto.Role}");
+        ArgumentNullException.ThrowIfNull(dto, nameof(dto));
+        var user = urepository.GetById(userId);
+        if (user == null)
+        {
+            logger.LogWarning("Failed, User with ID: {userId} not found", userId);
+            logService.Log(LogLevel.Warning, $"User with ID: {userId} not found");
+            throw new NotFoundException("User", userId);
+        }
+        user.ChangeRole(dto.Role);
+        urepository.Update(user);
+        _context.SaveChanges();
+        logger.LogInformation("Role for user with ID: {userId} changed successfully to {role}", userId, dto.Role);
+        logService.Log(LogLevel.Information, $"Role for user with ID: {userId} changed successfully to {dto.Role}");
     }
 }

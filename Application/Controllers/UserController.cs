@@ -48,7 +48,7 @@ public class UserController : ControllerBase
     }
     [Authorize(Roles = "Admin,HR")]
     [HttpPut("{id}")]
-    public ActionResult<UserResponseDto> Update(int id, [FromBody] UserRequestDto dto)
+    public ActionResult<UserResponseDto> Update(int id, [FromBody] UserUpdateDto dto)
     {
         var user = uService.Update(id, dto);
         return Ok(user);
@@ -93,5 +93,13 @@ public class UserController : ControllerBase
     {
         var user = uService.GetByUsername(username);
         return Ok(user);
+    }
+
+    [Authorize(Roles = "Admin")]
+    [HttpPut("role/{id}")]
+    public ActionResult ChangeRole(int id,[FromBody] RoleChangeDto dto)
+    {
+        uService.ChangeRole(id, dto);
+        return NoContent();
     }
 }

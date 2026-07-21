@@ -3,7 +3,7 @@ public class Department : EntityTracker{
     public string Name { get; set; }
     public string DepartmentCode { get; set; }
 
-    public string LeadNumber { get; set; }
+    public string? LeadNumber { get; set; }
     public List<User> Employees { get; set; }
     private Department() : base(0)
     {

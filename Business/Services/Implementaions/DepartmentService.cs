@@ -50,6 +50,7 @@ public class DepartmentService : IDepartmentService
 
         var department = dto.ToEntity<DepartmentRequestDto, Department>();
         var existingDepartment = drepository.GetByName(department.Name);
+        department.LeadNumber = dto.LeadSerialNumber ?? "";
         if (existingDepartment != null)
         {
             logService.Log(LogLevel.Warning, $"Department with name: {dto.Name} already exists");

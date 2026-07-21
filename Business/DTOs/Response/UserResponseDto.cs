@@ -14,4 +14,6 @@ public class UserResponseDto
     public string TotalSalary { get; set; }
     public string SalaryCurrency { get; set; }
     public DateTime CreatedAt { get; set; }
+    public List<TaskResponseDto>? Tasks { get; set; }
+    public List<NoteResponseDto>? Notes { get; set; }
 }
