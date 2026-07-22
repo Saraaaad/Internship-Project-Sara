@@ -3,11 +3,11 @@ public interface IUserService
     UserResponseDto GetById(int id);
     List<UserResponseDto> GetAll();
     UserResponseDto Create(UserRequestDto dto);
-    UserResponseDto Update(int id, UserRequestDto dto);
+    UserResponseDto Update(int id, UserUpdateDto dto);
     void Delete(int id);
     UserResponseDto UpdateSalary(int userId, SalaryRequestDto dto); 
     List<UserResponseDto> GetByDepartmentId(int departmentId);
     UserResponseDto GetByEmail(string email);
     UserResponseDto GetByUsername(string username);
-
+    void ChangeRole(int userId, RoleChangeDto dto);
 }

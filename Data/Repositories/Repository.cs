@@ -13,13 +13,13 @@ public class Repository<T> : IRepository<T> where T : class
         _dbSet = context.Set<T>();
     }
 
-    public T? GetById(int id)
+    public virtual T? GetById(int id)
     {
         return _dbSet.Find(id);
         
     }
 
-    public List<T> GetAll()
+    public virtual List<T> GetAll()
     {
         return _dbSet.ToList();
     }

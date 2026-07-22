@@ -5,6 +5,7 @@ public class Note : EntityTracker
     public string Title { get; set; }
     public string Content { get; set; }
     public int EmployeeId { get; set; }
+    public User Employee { get; set; }
     public int IssuerId { get; set; }
     private Note() : base(0) { }
     public Note(int id, string title, string content, int employeeId, int createdBy) : base(createdBy)

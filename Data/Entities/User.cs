@@ -42,11 +42,11 @@ public class User : EntityTracker
         return $"User [Id={Id}, Username={Username}, Email={Email}, Role={Role}, SerialNumber={SerialNumber}, FullName={FullName}, Phone={Phone}, Salary={Salary}, DepartmentId={DepartmentId}, LeadSerialNumber={LeadSerialNumber}, Department={Department}, Tasks=[{string.Join(", ", Tasks)}], Notes=[{string.Join(", ", Notes)}]]";
     }
 
-    public void UpdateProfile(string fullName, string email, string phone)
+    public void UpdateProfile(string? fullName, string? email, string? phone)
     {
-        FullName = fullName;
-        Email = email;
-        Phone = phone;
+        FullName = fullName ?? FullName;
+        Email = email ?? Email;
+        Phone = phone ?? Phone;
         UpdatedAt = DateTime.UtcNow;
     }
     public void ChangeRole(Role newRole)
