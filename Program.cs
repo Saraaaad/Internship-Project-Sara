@@ -4,56 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-Mapper.Initialize();
-
-builder.Services.AddSingleton<JwtSettings>(sp => builder.Configuration.GetSection("JwtSettings").Get<JwtSettings>());
-builder.Services.AddSingleton<JwtTokenGenerator>();
-
-
-// Connect to Database
-builder.Services.AddDbContext<DatabaseContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-
-// Add Repos
-builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>)); // Generic Repository
-builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<IDepartmentRepository, DepartmentRepository>();
-builder.Services.AddScoped<INoteRepository, NoteRepository>();
-builder.Services.AddScoped<ITaskRepository, TaskRepository>();
-builder.Services.AddScoped<ILogRepository, LogRepository>();
-
-// Add Services
-builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddScoped<IDepartmentService, DepartmentService>();
-builder.Services.AddScoped<INoteService, NoteService>();
-builder.Services.AddScoped<ITaskService, TaskService>();
-builder.Services.AddScoped<ILogService, LogService>();
-
-// Authentication and Authorization
-builder.Services.AddHttpContextAccessor(); 
-builder.Services.AddScoped<IAuthService, AuthService>();
-builder.Services.AddScoped<IAuthorizationService, AuthorizationService>();
-builder.Services.AddJwtAuthentication(builder.Configuration);
-
-// Add Controllers
-builder.Services.AddControllers();
-// Swagger config
-builder.Services.AddSwagger();
-
-// CORS
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowReactApp",
-        policy =>
-        {
-            policy.WithOrigins("http://localhost:5173")
-                  .AllowAnyHeader()
-                  .AllowAnyMethod()
-                  .AllowCredentials();
-        });
-});
-
-
+builder.Services.AddApplicationServices(builder.Configuration);
 var app = builder.Build();
 
 // Create Database
